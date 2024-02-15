@@ -18,7 +18,7 @@ def G_k(k, omega, E_0, w_0, Gamma):
     
     """
     w_k = 2*w_0*np.cos(k)
-    return (omega - E_0 - w_k + 1j + Gamma)**(-1)
+    return (omega - E_0 - w_k + 1j*Gamma)**(-1)
 
 def Rho_k(k, omega, E_0, w_0, Gamma):
     r"""
@@ -35,6 +35,6 @@ def get_sigma(k, omega, E_0, w_0, Gamma):
     """
     sigma_partial = []
     for k_value in k:
-        sigma_k = -2/np.pi*w_0**2 * np.sin(k)**2 * Rho_k(k, omega, E_0, w_0, Gamma)**2
+        sigma_k = -2/np.pi*w_0**2 * np.sin(k_value)**2 * Rho_k(k_value, omega, E_0, w_0, Gamma)**2
         sigma_partial.append(sigma_k)
     return np.sum(sigma_partial)
