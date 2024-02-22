@@ -48,7 +48,7 @@ def get_sigma(k, omega, w_0, Gamma, B_x, B_y, Delta, mu, beta):
         integrand = []
         for omega_value in omega:
             integrand.append(Fermi_function_derivative(omega_value, beta)*Rho_k(k_value, omega_value, w_0, Gamma, B_x, B_y, Delta, mu)@Rho_k(k_value, omega_value, w_0, Gamma, B_x, B_y, Delta, mu))
-        integral = np.trapz(np.array(integrand), x=omega, axis=0)
+        integral = np.trapz(np.array(integrand), axis=0)
         v_k = -2*w_0*np.sin(k_value)*np.kron(tau_0, sigma_0)
         sigma_k = -1/(8*np.pi)*v_k @ integral @ v_k
         sigma_partial.append(sigma_k)
@@ -66,3 +66,18 @@ def get_sigma_quad(k, w_0, Gamma, B_x, B_y, Delta, mu, beta):
         sigma_k = -1/(8*np.pi)*v_k @ integral @ v_k
         sigma_partial.append(sigma_k)
     return np.trace(np.sum(sigma_partial, axis=0))
+
+def get_sigma_quad_k(k, w_0, Gamma, B_x, B_y, Delta, mu, beta):
+    integral = scipy.integrate.quad_vec(lambda omega: integrand(k, omega, w_0, Gamma, B_x, B_y, Delta, mu, beta), -1, 1)[0]
+    v_k = -2*w_0*np.sin(k)*np.kron(tau_0, sigma_0)
+    sigma_k = -1/(8*np.pi)*v_k @ integral @ v_k
+    return np.trace(sigma_k)
+
+def get_sigma_k(k, omega, w_0, Gamma, B_x, B_y, Delta, mu, beta):
+    integrand = []
+    for omega_value in omega:
+        integrand.append(Fermi_function_derivative(omega_value, beta)*Rho_k(k, omega_value, w_0, Gamma, B_x, B_y, Delta, mu)@Rho_k(k, omega_value, w_0, Gamma, B_x, B_y, Delta, mu))
+    integral = np.trapz(np.array(integrand), omega, axis=0)
+    v_k = -2*w_0*np.sin(k)*np.kron(tau_0, sigma_0)
+    sigma_k = -1/(8*np.pi)*v_k @ integral @ v_k
+    return np.trace(sigma_k)
