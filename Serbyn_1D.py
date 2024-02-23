@@ -19,7 +19,7 @@ def G_k(k, epsilon_n, w_0, Gamma, Delta, mu):
         \epsilon_n=2\pi/\beta\left(n+\frac{1}{2}\right)
     """
     h_0 = (2*w_0*np.cos(k)-mu)*np.kron(tau_z, sigma_0) - Delta*np.kron(tau_y, sigma_y)
-    return np.linalg.inv((1j*epsilon_n)*np.kron(tau_0, sigma_0)-h_0)
+    return np.linalg.inv((1j*epsilon_n+1j*Gamma)*np.kron(tau_0, sigma_0)-h_0)
 
 def integrand_Serbyn(k, epsilon_n, w_0, Gamma, Delta, mu):
     r"""
@@ -49,7 +49,7 @@ def get_Q(k, w_0, Gamma, Delta, mu, N, beta):
     return -1/(2*beta)*np.sum(sumand)
 
 def get_Q_k(k, w_0, Gamma, Delta, mu, N, beta):
-    epsilon_n = 2*np.pi/beta*(np.arange(-N, N)+1/2)
+    epsilon_n = np.pi/beta*(np.arange(-N, N))
     sumand = []
     for E in epsilon_n:
         v = -2*w_0*np.sin(k)*np.kron(tau_0, sigma_0)

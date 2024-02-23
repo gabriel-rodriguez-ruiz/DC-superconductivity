@@ -35,7 +35,8 @@ def Fermi_function_derivative(omega, beta):
     return-beta*np.exp(beta*omega)/(1 + np.exp(beta*omega))**2
 
 def integrand(k, omega, w_0, Gamma, B_x, B_y, Delta, mu, beta):
-    return Fermi_function_derivative(omega, beta)*Rho_k(k, omega, w_0, Gamma, B_x, B_y, Delta, mu)@Rho_k(k, omega, w_0, Gamma, B_x, B_y, Delta, mu)
+    v_k = -2*w_0*np.sin(k)*np.kron(tau_0, sigma_0)
+    return Fermi_function_derivative(omega, beta)*v_k@Rho_k(k, omega, w_0, Gamma, B_x, B_y, Delta, mu)@v_k@Rho_k(k, omega, w_0, Gamma, B_x, B_y, Delta, mu)
 
 def get_sigma(k, omega, w_0, Gamma, B_x, B_y, Delta, mu, beta):
     r""" DC-superconductivity
@@ -68,9 +69,8 @@ def get_sigma_quad(k, w_0, Gamma, B_x, B_y, Delta, mu, beta):
     return np.trace(np.sum(sigma_partial, axis=0))
 
 def get_sigma_quad_k(k, w_0, Gamma, B_x, B_y, Delta, mu, beta):
-    integral = scipy.integrate.quad_vec(lambda omega: integrand(k, omega, w_0, Gamma, B_x, B_y, Delta, mu, beta), -1, 1)[0]
-    v_k = -2*w_0*np.sin(k)*np.kron(tau_0, sigma_0)
-    sigma_k = -1/(8*np.pi)*v_k @ integral @ v_k
+    integral = scipy.integrate.quad_vec(lambda omega: integrand(k, omega, w_0, Gamma, B_x, B_y, Delta, mu, beta), -2, 2)[0]
+    sigma_k = -1/(8*np.pi)*integral
     return np.trace(sigma_k)
 
 def get_sigma_k(k, omega, w_0, Gamma, B_x, B_y, Delta, mu, beta):
@@ -81,3 +81,13 @@ def get_sigma_k(k, omega, w_0, Gamma, B_x, B_y, Delta, mu, beta):
     v_k = -2*w_0*np.sin(k)*np.kron(tau_0, sigma_0)
     sigma_k = -1/(8*np.pi)*v_k @ integral @ v_k
     return np.trace(sigma_k)
+
+def Fermi_function(omega, beta):
+    return 1/(1+np.exp(beta*omega))
+
+def get_zero_order_k(k, omega, w_0, Gamma, B_x, B_y, Delta, mu, beta):
+    integrand = []
+    for omega_value in omega:
+        integrand.append(-2*w_0*np.sin(k)*np.kron(tau_0, sigma_0)*Fermi_function(omega_value, beta)*Rho_k(k, omega_value, w_0, Gamma, B_x, B_y, Delta, mu))
+    integral = np.trapz(np.array(integrand), omega, axis=0)
+    return np.trace(integral)
