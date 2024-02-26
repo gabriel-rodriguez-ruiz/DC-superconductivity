@@ -9,24 +9,30 @@ Created on Fri Feb 23 17:38:59 2024
 import numpy as np
 import matplotlib.pyplot as plt
 
-def G(k_n, E, mu):
-    return 1/(1j*k_n-(E-mu))
+def G(k_n, E, mu, Gamma):
+    return 1/(1j*k_n-(E-mu)-Gamma)
 
-def Matsubara_sum(k_n, E, mu, beta):
-    sumand = []
-    for k_n_value in k_n:
-        sumand.append(G(k_n_value, E, mu)*np.exp(1j*k_n_value*0.001))
-    sumand = 1/beta*np.array(sumand)
-    return np.sum(sumand)
+def Matsubara_sum(k_n, E, mu, beta, Gamma):
+    sumand = np.zeros_like(k_n, dtype=np.clongdouble)
+    for i in range(len(k_n)):
+        sumand[i] = G(k_n[i], E, mu, Gamma)*np.exp(1j*k_n[i]*0.01)
+    return 1/beta*np.sum(sumand, dtype=np.clongdouble)
 
-beta = 10
-N = 3000
+beta = np.linspace(10, 100, 11)
+N = 100000
 mu = 0
-E = np.linspace(-5, 2, 300)
-k_n = np.pi/(beta)*(2*np.arange(-N, N)+1)
-# k_n = np.delete(k_n, N)
+Gamma = 0
+E = np.linspace(-5, 2, 50)
+# k_n = np.pi/beta*(2*np.arange(-N, N, dtype=np.int64)+1)
 
-M = [Matsubara_sum(k_n, E_value, mu, beta) for E_value in E]
+# M = [Matsubara_sum(k_n, E_value, mu, beta, Gamma) for E_value in E]
+# fig, ax = plt.subplots()
+# ax.plot(E, M)
+
+E_value = -1
+N = np.linspace(1, 100000, 20)
 fig, ax = plt.subplots()
-ax.plot(E, M)
 
+for beta_value in beta:
+    M = [Matsubara_sum(np.pi/beta_value*(2*np.arange(-N_value, N_value, dtype=np.int64)+1), E_value, mu, beta_value, Gamma) for N_value in N]
+    ax.plot(N, M, label=r"$\beta=$"+f"{beta}")
