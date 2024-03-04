@@ -109,9 +109,9 @@ sigma_k = [get_sigma_k(k, omega, w_0, Gamma, mu, beta) for k in k]
 # sigma_quad_k = [get_sigma_quad_k(k, w_0, Gamma, mu, beta) for k in k]
 # zero_order_k = [get_zero_order_k(k, omega, w_0, Gamma, mu, beta) for k in k]
 fig, ax = plt.subplots()
-ax.plot(k, Q_k, label="Q")
+# ax.plot(k, Q_k, label="Q")
 ax.plot(k, sigma_k, label=r"$\sigma$")
-# ax.plot(k, Q_k_Matsubara, label=r"$Q integral$")
+ax.plot(k, 1/Gamma*np.array(Q_k), label="Q/Gamma")
 ax.set_xlabel("k")  
 plt.legend()
 
