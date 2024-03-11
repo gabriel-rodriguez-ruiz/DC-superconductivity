@@ -11,7 +11,7 @@ from pauli_matrices import tau_0, sigma_0, tau_z, sigma_x, sigma_y, tau_y
 import scipy
 import matplotlib.pyplot as plt
 
-def G_k(k, epsilon_n, w_0, Gamma, mu, Omega):
+def G_k(k, epsilon_n, w_0, Gamma, mu):
     r""" Matsubara Green's function.
     
     .. math ::
@@ -20,7 +20,7 @@ def G_k(k, epsilon_n, w_0, Gamma, mu, Omega):
         \epsilon_n=2\pi/\beta\left(n+\frac{1}{2}\right)
     """
     h_0 = 2*w_0*np.cos(k)-mu
-    return 1/(1j*epsilon_n+1j*np.sign(epsilon_n)*Gamma+1j*Omega-h_0)
+    return 1/(1j*epsilon_n+1j*np.sign(epsilon_n)*Gamma-h_0)
 
 def G_frozen(k, omega, w_0, Gamma, mu):
     h_0 = 2*w_0*np.cos(k)-mu
@@ -31,7 +31,7 @@ def get_Q_k(k, w_0, Gamma, mu, N, beta, Omega):
     sumand = np.zeros_like(epsilon_n, dtype=complex)
     for i in range(len(epsilon_n)):
         v = -2*w_0*np.sin(k)
-        sumand[i] = v**2*G_k(k, epsilon_n[i], w_0, Gamma, mu, Omega)*G_k(k, epsilon_n[i], w_0, Gamma, mu, Omega=0)
+        sumand[i] = v**2*G_k(k, epsilon_n[i]+Omega, w_0, Gamma, mu)*G_k(k, epsilon_n[i], w_0, Gamma, mu)
     return -1/(beta)*np.sum(sumand, dtype=complex)
 
 def Rho_k(k, omega, w_0, Gamma, mu):
@@ -88,14 +88,14 @@ def get_Q_k_Matsubara(k, omega, w_0, Gamma, mu, N, beta):
 
 #%%
 
-beta = 500
+beta = 50
 N = 100000
 Gamma = 0.01
 mu = 0
 w_0 = 1
-omega = np.linspace(-0.01, 0.01, 1000)
+omega = np.linspace(-1, 1, 1000)
 epsilon_n = np.pi/beta*(2*np.arange(-N, N) + 1)
-Omega = np.pi/beta*(2*2 + 1)
+Omega = np.pi/beta*(2*0 + 1)
 # k = np.pi/2
 # Q_k = get_Q_k(k, w_0, Gamma, mu, N, beta)
 # sigma_quad_k = get_sigma_quad_k(k, w_0, Gamma, mu, beta)
@@ -116,46 +116,21 @@ ax.set_xlabel("k")
 plt.legend()
 
 #%%
-beta = 10
-Gamma = 0.1
+beta = 100
+N = 100000
+Gamma = 0.01
 mu = 0
 w_0 = 1
-omega = np.linspace(-20, 20, 10000)
-epsilon_n = np.pi/beta*(-2 + 1)
+omega = np.linspace(-1, 1, 1000)
+epsilon_n = np.pi/beta*(2*np.arange(-N, N) + 1)
+Omega = np.pi/beta*(2*np.arange(0, 10) + 1)
 
-L = 500
-k = 2*np.pi/L*np.arange(0, L)
-# Q_k_Matsubara = [get_Q_k_Matsubara(k, omega, w_0, Gamma, mu, N, beta) for k in k]
-G_k_list = [G_k(k, epsilon_n, w_0, Gamma, mu) for k in k]
-G_k_Matsubara_list = [G_k_Matsubara(k, epsilon_n, omega, w_0, Gamma, mu) for k in k]
-
-fig, ax = plt.subplots()
-ax.plot(k, np.real(G_k_list), label="Real analytic continuation")
-ax.plot(k, np.real(G_k_Matsubara_list), label="Real integrated")
-ax.plot(k, np.imag(G_k_list), label="Imaginary analytic continuation")
-ax.plot(k, np.imag(G_k_Matsubara_list), label="Imaginary integrated")
-ax.set_xlabel("k")
-ax.set_ylabel("G")
-plt.legend()
-
-#%%
-beta = 10
-Gamma = np.linspace(0.01, 1)
-w_0 = 1
-omega = np.linspace(-10, 10, 10000)
-epsilon_n = np.pi/beta*(0 + 1)
-mu = 0
+L = 200
 k = np.pi/2
-# Q_k_Matsubara = [get_Q_k_Matsubara(k, omega, w_0, Gamma, mu, N, beta) for k in k]
-G_k_list = [G_k(k, epsilon_n, w_0, Gamma, mu) for Gamma in Gamma]
-G_k_Matsubara_list = [G_k_Matsubara(k, epsilon_n, omega, w_0, Gamma, mu) for Gamma in Gamma]
-
+Q_k = [1/L*(get_Q_k(k, w_0, Gamma, mu, N, beta, Omega)-get_Q_k(k, w_0, Gamma, mu, N, beta, Omega=0)) for Omega in Omega]
+# sigma_k = 1/L*get_sigma_k(k, omega, w_0, Gamma, mu, beta)
 fig, ax = plt.subplots()
-ax.plot(Gamma, np.real(G_k_list), label="Real analytic continuation")
-ax.plot(Gamma, np.real(G_k_Matsubara_list), label="Real integrated")
-ax.plot(Gamma, np.imag(G_k_list), label="Imaginary analytic continuation")
-ax.plot(Gamma, np.imag(G_k_Matsubara_list), label="Imaginary integrated")
-
-ax.set_xlabel(r"$\Gamma$")
-ax.set_ylabel("G")
+# ax.plot(0, sigma_k, "o", label=r"$\sigma$")
+ax.plot(Omega, np.array(Q_k), "o",label="Q/Gamma")
+ax.set_xlabel(r"$\Omega$")  
 plt.legend()
