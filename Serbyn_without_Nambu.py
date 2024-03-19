@@ -31,7 +31,7 @@ def get_Q_k(k, w_0, Gamma, mu, N, beta, Omega):
     sumand = np.zeros_like(epsilon_n, dtype=complex)
     for i in range(len(epsilon_n)):
         v = -2*w_0*np.sin(k)
-        sumand[i] = v**2*G_k(k, epsilon_n[i]+Omega, w_0, Gamma, mu)*G_k(k, epsilon_n[i], w_0, Gamma, mu)
+        sumand[i] = (v**2)*G_k(k, epsilon_n[i]+Omega, w_0, Gamma, mu)*G_k(k, epsilon_n[i], w_0, Gamma, mu)
     return -1/(beta)*np.sum(sumand, dtype=complex)
 
 def Rho_k(k, omega, w_0, Gamma, mu):
@@ -88,14 +88,14 @@ def get_Q_k_Matsubara(k, omega, w_0, Gamma, mu, N, beta):
 
 #%%
 
-beta = 50
+beta = 10
 N = 100000
 Gamma = 0.01
 mu = 0
 w_0 = 1
 omega = np.linspace(-1, 1, 1000)
 epsilon_n = np.pi/beta*(2*np.arange(-N, N) + 1)
-Omega = np.pi/beta*(2*0 + 1)
+Omega = 2*np.pi/beta*(1)    #bosonic frequency
 # k = np.pi/2
 # Q_k = get_Q_k(k, w_0, Gamma, mu, N, beta)
 # sigma_quad_k = get_sigma_quad_k(k, w_0, Gamma, mu, beta)
@@ -103,7 +103,7 @@ Omega = np.pi/beta*(2*0 + 1)
 
 L = 200
 k = 2*np.pi/L*np.arange(0, L)
-Q_k = [1/L*get_Q_k(k, w_0, Gamma, mu, N, beta, Omega) for k in k]
+Q_k = [1/L*(get_Q_k(k, w_0, Gamma, mu, N, beta, Omega) - get_Q_k(k, w_0, Gamma, mu, N, beta, Omega=0)) for k in k]
 # Q_k_Matsubara = [get_Q_k_Matsubara(k, omega, w_0, Gamma, mu, N, beta) for k in k]
 sigma_k = [1/L*get_sigma_k(k, omega, w_0, Gamma, mu, beta) for k in k]
 # sigma_quad_k = [get_sigma_quad_k(k, w_0, Gamma, mu, beta) for k in k]
@@ -116,21 +116,21 @@ ax.set_xlabel("k")
 plt.legend()
 
 #%%
-beta = 100
+beta = 500
 N = 100000
 Gamma = 0.01
 mu = 0
 w_0 = 1
-omega = np.linspace(-1, 1, 1000)
+omega = np.linspace(-0.1, 0.1, 1000)
 epsilon_n = np.pi/beta*(2*np.arange(-N, N) + 1)
-Omega = np.pi/beta*(2*np.arange(0, 10) + 1)
+Omega = np.pi/beta*(2*np.arange(1, 10))     #boson frequency
 
 L = 200
 k = np.pi/2
-Q_k = [1/L*(get_Q_k(k, w_0, Gamma, mu, N, beta, Omega)-get_Q_k(k, w_0, Gamma, mu, N, beta, Omega=0)) for Omega in Omega]
+Q_k = [1/L*(get_Q_k(k, w_0, Gamma, mu, N, beta, Omega)) for Omega in Omega]
 # sigma_k = 1/L*get_sigma_k(k, omega, w_0, Gamma, mu, beta)
 fig, ax = plt.subplots()
 # ax.plot(0, sigma_k, "o", label=r"$\sigma$")
-ax.plot(Omega, np.array(Q_k), "o",label="Q/Gamma")
+ax.plot(Omega, np.array(Q_k)/Omega, "o",label="Q/Gamma")
 ax.set_xlabel(r"$\Omega$")  
 plt.legend()
