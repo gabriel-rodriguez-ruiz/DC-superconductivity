@@ -116,18 +116,18 @@ ax.set_xlabel("k")
 plt.legend()
 
 #%%
-beta = 500
-N = 100000
-Gamma = 0.01
+beta = 10
+N = 1000000
+Gamma = 0.1
 mu = 0
 w_0 = 1
-omega = np.linspace(-0.1, 0.1, 1000)
+omega = np.linspace(-1, 1, 1000)
 epsilon_n = np.pi/beta*(2*np.arange(-N, N) + 1)
 Omega = np.pi/beta*(2*np.arange(1, 10))     #boson frequency
 
 L = 200
 k = np.pi/2
-Q_k = [1/L*(get_Q_k(k, w_0, Gamma, mu, N, beta, Omega)) for Omega in Omega]
+Q_k = [1/L*(get_Q_k(k, w_0, Gamma, mu, N, beta, Omega)-get_Q_k(k, w_0, Gamma, mu, N, beta, Omega=0)) for Omega in Omega]
 # sigma_k = 1/L*get_sigma_k(k, omega, w_0, Gamma, mu, beta)
 fig, ax = plt.subplots()
 # ax.plot(0, sigma_k, "o", label=r"$\sigma$")
