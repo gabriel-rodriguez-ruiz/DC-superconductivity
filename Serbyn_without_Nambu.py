@@ -86,6 +86,14 @@ def get_Q_k_Matsubara(k, omega, w_0, Gamma, mu, N, beta):
         sumand[i] = v**2*G_k_Matsubara(k, epsilon_n[i], omega, w_0, Gamma, mu)**2
     return -1/(2*beta)*np.sum(sumand, dtype=complex)
 
+def get_diamagnetic_term(k, w_0, beta):
+    sumand = np.zeros_like(k)
+    for i in range(len(k)):
+        sumand[i] = -2*w_0*np.cos(k[i])*Fermi_function(2*np.cos(k[i]), beta)
+    return np.sum(sumand)
+
+def get_diamagnetic_term_k(k, w_0, beta):
+    return -2*w_0*np.cos(k)*Fermi_function(2*np.cos(k), beta)
 #%%
 
 beta = 10
@@ -103,21 +111,24 @@ Omega = 2*np.pi/beta*(1)    #bosonic frequency
 
 L = 200
 k = 2*np.pi/L*np.arange(0, L)
-Q_k = [1/L*(get_Q_k(k, w_0, Gamma, mu, N, beta, Omega) - get_Q_k(k, w_0, Gamma, mu, N, beta, Omega=0)) for k in k]
+Q_k = [1/L*(get_Q_k(k, w_0, Gamma, mu, N, beta, Omega)) for k in k]
 # Q_k_Matsubara = [get_Q_k_Matsubara(k, omega, w_0, Gamma, mu, N, beta) for k in k]
 sigma_k = [1/L*get_sigma_k(k, omega, w_0, Gamma, mu, beta) for k in k]
 # sigma_quad_k = [get_sigma_quad_k(k, w_0, Gamma, mu, beta) for k in k]
 # zero_order_k = [get_zero_order_k(k, omega, w_0, Gamma, mu, beta) for k in k]
+diamagnetic_term = get_diamagnetic_term(k, w_0, beta)
+
 fig, ax = plt.subplots()
 # ax.plot(k, Q_k, label="Q")
 ax.plot(k, sigma_k, label=r"$\sigma$")
 ax.plot(k, 1/Omega*np.array(Q_k), label="Q/Gamma")
+ax.plot(k, diamagnetic_term, label="Diamagnetic")
 ax.set_xlabel("k")  
 plt.legend()
 
 #%%
 beta = 10
-N = 1000000
+N = 100000
 Gamma = 0.1
 mu = 0
 w_0 = 1
@@ -126,11 +137,11 @@ epsilon_n = np.pi/beta*(2*np.arange(-N, N) + 1)
 Omega = np.pi/beta*(2*np.arange(1, 10))     #boson frequency
 
 L = 200
-k = np.pi/2
-Q_k = [1/L*(get_Q_k(k, w_0, Gamma, mu, N, beta, Omega)-get_Q_k(k, w_0, Gamma, mu, N, beta, Omega=0)) for Omega in Omega]
-# sigma_k = 1/L*get_sigma_k(k, omega, w_0, Gamma, mu, beta)
+k = np.pi/4
+Q_k = [1/L*(get_Q_k(k, w_0, Gamma, mu, N, beta, Omega)) for Omega in Omega]
+sigma_k = 1/L*get_sigma_k(k, omega, w_0, Gamma, mu, beta)
 fig, ax = plt.subplots()
-# ax.plot(0, sigma_k, "o", label=r"$\sigma$")
-ax.plot(Omega, np.array(Q_k)/Omega, "o",label="Q/Gamma")
+ax.plot(0, sigma_k, "o", label=r"$\sigma$")
+ax.plot(Omega, np.array(Q_k), "o",label="Q/Gamma")
 ax.set_xlabel(r"$\Omega$")  
 plt.legend()
