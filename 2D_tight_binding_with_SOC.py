@@ -6,14 +6,6 @@ Created on Fri Mar 22 12:39:20 2024
 @author: gabriel
 """
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Feb 15 18:17:00 2024
-
-@author: gabriel
-"""
-
 import numpy as np
 from pauli_matrices import tau_0, sigma_0, tau_z, sigma_x, sigma_y, tau_x
 import scipy.integrate
@@ -40,7 +32,7 @@ def G_k(k_x, k_y, omega, w_0, Gamma, B_x, B_y, Delta, mu, Lambda):
         + Delta*np.kron(tau_x, sigma_0)
         + Lambda_x + Lambda_y
            )
-    return np.linalg.inv(omega*np.kron(tau_0, sigma_0) - H_k + 1j*Gamma*np.kron(tau_0, sigma_0))
+    return np.linalg.inv(omega*np.kron(tau_0, sigma_0) - H_k + 1j*np.sign(omega)*Gamma*np.kron(tau_0, sigma_0))
 
 def get_Q_k(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta):
     r""" Kernel for given k=(k_x, k_y)
@@ -50,7 +42,7 @@ def get_Q_k(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta):
         Q_{\alpha, \beta}(k_x, k_y) = \frac{-1}{2\beta}\sum_{i\epsilon_n}\left(Tr\left[v_\alpha G(\mathbf{k},i\epsilon_n)v_\beta G(\mathbf{k},i\epsilon_n)\right]\right) 
     """
     epsilon_n = np.pi/beta * (2*np.arange(-N, N) + 1)
-    sumand = np.zeros((2, 2, len(epsilon_n)), dtype=complex)
+    sumand = np.zeros((len(epsilon_n), 2, 2), dtype=complex)
     v_x = (
            -2*w_0*np.sin(k_x) * np.kron(tau_z, sigma_0)
            +2*Lambda*np.cos(k_x) * np.kron(tau_z, sigma_y)
@@ -64,16 +56,16 @@ def get_Q_k(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta):
                 k_x, k_y, 1j*epsilon_n[i], w_0, Gamma,
                 B_x, B_y, Delta, mu, Lambda
                 )
-        sumand[:, :, i] = np.array([[np.trace(v_x @ G @ v_x @ G), np.trace(v_x @ G @ v_y @ G)],
+        sumand[i, :, :] = np.array([[np.trace(v_x @ G @ v_x @ G), np.trace(v_x @ G @ v_y @ G)],
                               [np.trace(v_y @ G @ v_x @ G), np.trace(v_y @ G @ v_y @ G)]])
     return -1/(2*beta) * np.sum(sumand, dtype=complex, axis=0)
 
-def get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta):
+def get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta, Alpha, Beta):
     L_x = len(k_x)
     L_y = len(k_y)
     sumand = np.zeros((2, 2, L_x, L_y), dtype=complex)
-    for i in range(2):
-        for j in range(2):
+    for i in Alpha:
+        for j in Beta:
             for k in range(len(k_x)):
                 for l in range(len(k_y)):
                     sumand[i, j, k, l] = get_Q_k(k_x[k], k_y[l], w_0, Gamma,
@@ -91,9 +83,9 @@ B_x = 0
 B_y = 0
 Lambda = 0
 
-L = 10
-k_x = 2*np.pi/L*np.arange(0, L)
-k_y = 2*np.pi/L*np.arange(0, L)
+L = 30
+k_x = 2*np.pi/L*np.arange(0, L/2)   #1/4 of the Brillouin zone
+k_y = 2*np.pi/L*np.arange(0, L/2)
 K_x, K_y = np.meshgrid(k_x, k_y)
 
 Alpha = [0]
