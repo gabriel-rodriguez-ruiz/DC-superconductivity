@@ -60,12 +60,12 @@ def get_Q_k(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta):
                               [np.trace(v_y @ G @ v_x @ G), np.trace(v_y @ G @ v_y @ G)]])
     return -1/(2*beta) * np.sum(sumand, dtype=complex, axis=0)
 
-def get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta, Alpha, Beta):
+def get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta):
     L_x = len(k_x)
     L_y = len(k_y)
     sumand = np.zeros((2, 2, L_x, L_y), dtype=complex)
-    for i in Alpha:
-        for j in Beta:
+    for i in range(2):
+        for j in range(2):
             for k in range(len(k_x)):
                 for l in range(len(k_y)):
                     sumand[i, j, k, l] = get_Q_k(k_x[k], k_y[l], w_0, Gamma,
@@ -74,11 +74,11 @@ def get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta, Alpha, Bet
 
 #%%
 beta = 10
-N = 100
+N = 1000
 Gamma = 0.01
 mu = 0
 w_0 = 1
-Delta = 0
+Delta = 0.1
 B_x = 0
 B_y = 0
 Lambda = 0
@@ -88,23 +88,47 @@ k_x = 2*np.pi/L*np.arange(0, L/2)   #1/4 of the Brillouin zone
 k_y = 2*np.pi/L*np.arange(0, L/2)
 K_x, K_y = np.meshgrid(k_x, k_y)
 
-Alpha = [0]
-Beta = [0]
+Alpha = 0
+Beta = 1
 
-Z = np.zeros((len(Alpha), len(Beta), len(k_x), len(k_y)), dtype=complex)
-for i in range(len(Alpha)):
-    for j in range(len(Beta)):
-        for k, k_x_value in enumerate(k_x):
-            print(k)
-            for l, k_y_value in enumerate(k_y):
-                Z[i, j, k, l] = 1/L**2 * get_Q_k(k_x_value, k_y_value, w_0, Gamma,
-                                           B_x, B_y, Delta, mu, Lambda, N, beta)[i, j]
+Z = np.zeros((len(k_x), len(k_y)), dtype=complex)
+
+for k, k_x_value in enumerate(k_x):
+    print(k)
+    for l, k_y_value in enumerate(k_y):
+        Z[k, l] = 1/L**2 * (get_Q_k(k_x_value, k_y_value, w_0, Gamma,
+                                   B_x, B_y, Delta, mu, Lambda, N, beta)[Alpha, Beta]
+                            -get_Q_k(k_x_value, k_y_value, w_0, Gamma,
+                                                       B_x, B_y, 0, mu, Lambda, N, beta)[Alpha, Beta])
 
 fig, ax = plt.subplots()
 X, Y = np.meshgrid(k_x, k_y)
-cs = ax.contourf(X, Y, Z[0, 0, :, :])
-cbar = fig.colorbar(cs)
+# cs = ax.contourf(X, Y, Z)
+im = ax.imshow(np.real(Z), extent=[X.min(), X.max(), Y.min(), Y.max()], origin="lower")
+fig.colorbar(im)
+# cbar = fig.colorbar(cs)
 ax.set_xlabel(r"$k_x$")
 ax.set_ylabel(r"$k_y$")
+# ax.set_xticks([0, np.pi/4, np.pi/2, 3*np.pi/4, np.pi],
+#               ["0", r"$\frac{\pi}{4}$",r"$\frac{\pi}{2}$",
+#                r"$\frac{3\pi}{4}$", r"$\pi$"])
 
-# Q = get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta)
+
+#%%
+beta = 10
+N = 100
+Gamma = 0.01
+mu = 0
+w_0 = 1
+Delta = 0.1
+B_x = 0
+B_y = 0
+Lambda = 0
+
+L = 30
+k_x = 2*np.pi/L*np.arange(0, L)
+k_y = 2*np.pi/L*np.arange(0, L)
+K_x, K_y = np.meshgrid(k_x, k_y)
+
+Q = get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta)
+
