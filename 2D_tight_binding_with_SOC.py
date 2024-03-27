@@ -126,14 +126,14 @@ mu = 0
 w_0 = 1
 Delta = 0.1
 theta = np.pi/2
-B = 1
+B = 0.05
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.1
 Alpha = 0
 Beta = 0
 
-L = 30
+L = 50
 k_x = 2*np.pi/L*np.arange(0, L)
 k_y = 2*np.pi/L*np.arange(0, L)
 
@@ -148,7 +148,7 @@ mu = 0
 w_0 = 1
 Delta = 0.1
 theta = np.pi/2
-B = 0.01
+B = 0.05
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.1
@@ -161,10 +161,13 @@ n_L = np.zeros(len(L_values))
 for i, L in enumerate(L_values):
     k_x = 2*np.pi/L*np.arange(0, L)
     k_y = 2*np.pi/L*np.arange(0, L)
+    # n_L[i] = -(
+    #           get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta, Alpha, Beta)
+    #           - get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, 0, mu, Lambda, N, beta, Alpha, Beta)
+    #           )
     n_L[i] = -(
               get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta, Alpha, Beta)
-              / get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, 0, mu, Lambda, N, beta, Alpha, Beta)
-              - 1
+              - get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, 0, mu, Lambda, N, beta, Alpha, Beta)
               )
     print(i)
     
@@ -181,3 +184,36 @@ plt.tight_layout()
 #%% Saving
 np.savez("Large_L_limit_for Q", L_values=L_values, n_L=n_L, Lambda=Lambda,
          Delta=Delta, B=B, theta=theta)
+
+#%% Q vs. B
+
+beta = 100
+N = 100
+Gamma = 0.01
+mu = 0
+w_0 = 1
+Delta = 0.1
+theta = np.pi/2
+B_values = np.linspace(0, 3*Delta, 10)
+Lambda = 0.1
+Alpha = 0
+Beta = 0
+L = 100
+k_x = 2*np.pi/L*np.arange(0, L)
+k_y = 2*np.pi/L*np.arange(0, L)
+
+n_B_y = np.zeros(len(B_values))
+for i, B in enumerate(B_values):
+    B_x = B * np.cos(theta)
+    B_y = B * np.sin(theta)
+    n_B_y[i] = -(
+              get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta, Alpha, Beta)
+              - get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, 0, mu, Lambda, N, beta, Alpha, Beta)
+              )
+    print(i)
+    
+fig, ax = plt.subplots()
+ax.plot(B_values/Delta, n_B_y, "o")
+ax.set_xlabel(r"$\frac{B_y}{\Delta}$")
+ax.set_ylabel(r"$n(B_y)$")
+plt.tight_layout()

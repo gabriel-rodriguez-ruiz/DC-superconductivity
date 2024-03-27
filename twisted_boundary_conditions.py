@@ -132,7 +132,7 @@ w_0 = 1
 mu = 0
 Delta = 0.1
 theta = np.pi/2
-B = 1
+B = 0.05
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.1
@@ -148,7 +148,8 @@ params = {"L_values":L_values, "w_0":w_0, "Delta":Delta,
 
 n_L = np.zeros(len(L_values))
 for i, L in enumerate(L_values):
-    n_L[i] = get_superconducting_density(L, L, phi_x_values, phi_y_values, w_0, mu, Delta, B_x, B_y, Lambda)
+    n_L[i] = (get_superconducting_density(L, L, phi_x_values, phi_y_values, w_0, mu, Delta, B_x, B_y, Lambda)
+              )
     print(i)
     
 fig, ax = plt.subplots()
@@ -156,7 +157,7 @@ ax.plot(L_values, n_L, "o")
 # ax.plot(1/(L_values)**2, n_L, "o")
 # ax.set_xlabel(r"$\frac{1}{L_x L_y}$")
 ax.set_xlabel("L")
-ax.set_ylabel(r"$(n_s)_{xx}$")
+ax.set_ylabel(r"$\frac{(n_s)_{xx}}{(n)_{xx}}$")
 ax.set_title(r"$\lambda=$" + f"{Lambda}"
              +r"; $\Delta=$" + f"{Delta}"
              +r"; $\theta=$" + f"{theta:.3}"
@@ -175,6 +176,7 @@ w_0 = 1
 mu = 0
 Delta = 0.1
 theta_values = np.linspace(0, np.pi/2, 10)
+B = 0.05
 Lambda = 0.1
 phi_x_values = np.linspace(-np.pi/10000, np.pi/10000, 10)
 phi_y_values = [0]    #np.linspace(0, np.pi, 1)
@@ -183,8 +185,8 @@ k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
 
 n_theta = np.zeros_like(theta_values)
 for i, theta in enumerate(theta_values):
-    B_x = np.cos(theta)
-    B_y = np.sin(theta)
+    B_x = B * np.cos(theta)
+    B_y = B * np.sin(theta)
     n_theta[i] = get_superconducting_density(L_x, L_y, phi_x_values, phi_y_values, w_0, mu, Delta, B_x, B_y, Lambda)
     print(i)
     
@@ -193,3 +195,71 @@ ax.plot(theta_values, n_theta, "o")
 ax.set_xlabel(r"$\theta$")
 ax.set_ylabel(r"$n_{\theta}$")
 plt.tight_layout()
+
+#%% Load data
+
+data = np.load("Large_L_limit")
+
+#%% n_s vs. B_y
+
+L_x = 50
+L_y = 50
+w_0 = 1
+mu = 0
+Delta = 0.1
+theta = np.pi/2
+B_values = np.linspace(0, 3*Delta, 10)
+Lambda = 0
+phi_x_values = np.linspace(-np.pi/10000, np.pi/10000, 10)
+phi_y_values = [0]    #np.linspace(0, np.pi, 1)
+k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
+k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
+
+n_B_y = np.zeros(len(B_values))
+for i, B in enumerate(B_values):
+    B_x = B * np.cos(theta)
+    B_y = B * np.sin(theta)
+    n_B_y[i] = get_superconducting_density(L_x, L_y, phi_x_values, phi_y_values, w_0, mu, Delta, B_x, B_y, Lambda)
+    print(i)
+
+fig, ax = plt.subplots()
+ax.plot(B_values/Delta, n_B_y, "o")
+ax.set_xlabel(r"$\frac{B_y}{\Delta}$")
+ax.set_ylabel(r"$n(B_y)$")
+plt.tight_layout()
+
+#%% Plot energy bands
+L_x = 1000
+L_y = 1
+w_0 = 1
+Delta = 0.1
+mu = 20*Delta-4*w_0#2 - 4*w_0
+theta = np.pi/2
+B = 0
+B_x = B * np.cos(theta)
+B_y = B * np.sin(theta)
+Lambda = 0.5
+phi_x_values = [0]
+phi_y_values = [0]    #np.linspace(0, np.pi, 1)
+k_x_values = np.pi/L_x*np.arange(-L_x, L_x)
+k_y_values = [0]#np.pi/L_y*np.arange(-L_y, L_y)
+
+params = {"L_x":L_x, "L_y":L_y, "w_0":w_0, "Delta":Delta,
+          "mu":mu, "phi_x_values":phi_x_values,
+          "phi_x_values":phi_x_values,
+          "phi_y_values":phi_y_values,
+          "B_x":B_x, "B_y":B_y, "Lambda":Lambda
+          }
+
+E = get_Energy(k_x_values, k_y_values, phi_x_values, phi_y_values, w_0, mu, Delta, B_x, B_y, Lambda)
+
+fig, ax = plt.subplots()
+# ax.plot(k_x_values, E[:,0,0,0,0]/Delta)
+# ax.plot(k_x_values, E[:,0,0,0,1]/Delta)
+# ax.plot(k_x_values, E[:,0,0,0,2]/Delta)
+# ax.plot(k_x_values, E[:,0,0,0,3]/Delta)
+k_F = 1#k_x_values[np.where(E[:,0,0,0,1]==max(E[:,0,0,0,1]))[0][0]]#np.arctan(1/Lambda)#2*Lambda
+ax.plot(k_x_values/k_F, E[:,0,0,0,0], "o")
+ax.plot(k_x_values/k_F, E[:,0,0,0,1], "o")
+ax.plot(k_x_values/k_F, E[:,0,0,0,2], "o")
+ax.plot(k_x_values/k_F, E[:,0,0,0,3], "o")
