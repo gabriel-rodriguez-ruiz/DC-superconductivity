@@ -119,7 +119,7 @@ ax.set_ylabel(r"$k_y$")
 
 
 #%%
-beta = 100
+beta = 10
 N = 1000
 Gamma = 0.01
 mu = 0
@@ -139,3 +139,45 @@ k_y = 2*np.pi/L*np.arange(0, L)
 
 Q = get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta, Alpha, Beta)
 
+#%% Q vs. L
+
+beta = 10
+N = 100
+Gamma = 0.01
+mu = 0
+w_0 = 1
+Delta = 0.1
+theta = np.pi/2
+B = 0.01
+B_x = B * np.cos(theta)
+B_y = B * np.sin(theta)
+Lambda = 0.1
+Alpha = 0
+Beta = 0
+
+L_values = np.linspace(10, 200, 10, dtype=int)
+
+n_L = np.zeros(len(L_values))
+for i, L in enumerate(L_values):
+    k_x = 2*np.pi/L*np.arange(0, L)
+    k_y = 2*np.pi/L*np.arange(0, L)
+    n_L[i] = -(
+              get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta, Alpha, Beta)
+              / get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, 0, mu, Lambda, N, beta, Alpha, Beta)
+              - 1
+              )
+    print(i)
+    
+fig, ax = plt.subplots()
+ax.plot(L_values, n_L, "o")
+ax.set_xlabel("L")
+ax.set_ylabel(r"$Q_{xx}$")
+ax.set_title(r"$\lambda=$" + f"{Lambda}"
+             +r"; $\Delta=$" + f"{Delta}"
+             +r"; $\theta=$" + f"{theta:.3}"
+             +f"; B={B}")
+plt.tight_layout()
+
+#%% Saving
+np.savez("Large_L_limit_for Q", L_values=L_values, n_L=n_L, Lambda=Lambda,
+         Delta=Delta, B=B, theta=theta)

@@ -139,6 +139,13 @@ Lambda = 0.1
 phi_x_values = np.linspace(-1/10000, 1/10000, 10)
 phi_y_values = [0]    #np.linspace(0, np.pi, 1)
 
+params = {"L_values":L_values, "w_0":w_0, "Delta":Delta,
+          "mu":mu, "phi_x_values":phi_x_values,
+          "phi_y_values":phi_x_values,
+          "B":B,
+          "B_x":B_x, "B_y":B_y, "Lambda":Lambda
+          }
+
 n_L = np.zeros(len(L_values))
 for i, L in enumerate(L_values):
     n_L[i] = get_superconducting_density(L, L, phi_x_values, phi_y_values, w_0, mu, Delta, B_x, B_y, Lambda)
