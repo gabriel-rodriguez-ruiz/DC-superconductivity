@@ -172,7 +172,7 @@ np.savez("Large_L_limit", L=L, n_L=n_L, Lambda=Lambda,
 
 L_x = 50
 L_y = 50
-w_0 = 1
+w_0 = -10
 mu = 0
 Delta = 0.1
 theta_values = np.linspace(0, np.pi/2, 10)
@@ -204,12 +204,12 @@ data = np.load("Large_L_limit")
 
 L_x = 50
 L_y = 50
-w_0 = 1
-mu = 0
-Delta = 0.1
+w_0 = -10
+Delta = 0.2
+mu = 2*(20*Delta+2*w_0)
 theta = np.pi/2
 B_values = np.linspace(0, 3*Delta, 10)
-Lambda = 0.5
+Lambda = 0.1
 phi_x_values = np.linspace(-np.pi/10000, np.pi/10000, 10)
 phi_y_values = [0]    #np.linspace(0, np.pi, 1)
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
@@ -233,13 +233,13 @@ L_x = 1000
 L_y = 1
 w_0 = -10
 Delta = 0.2
-mu = 2*(20*Delta+2*w_0) #0
+mu = 2*(20*Delta+2*w_0)#0
 k_F = np.sqrt((-4*w_0 + mu)/(-w_0))
 theta = np.pi/2
-B = 1
+B = 0
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
-Lambda = 5*Delta/np.sqrt((-4*w_0 + mu)/(-w_0)) #5*Delta/k_F
+Lambda = 0.2#5*Delta/np.sqrt((-4*w_0 + mu)/(-w_0)) #5*Delta/k_F
 phi_x_values = [0]
 phi_y_values = [0]    #np.linspace(0, np.pi, 1)
 k_x_values = np.pi/L_x*np.arange(-L_x, L_x)
@@ -259,10 +259,12 @@ fig, ax = plt.subplots()
 # ax.plot(k_x_values, E[:,0,0,0,1]/Delta)
 # ax.plot(k_x_values, E[:,0,0,0,2]/Delta)
 # ax.plot(k_x_values, E[:,0,0,0,3]/Delta)
-ax.plot(k_x_values/k_F, E[:,0,0,0,0]/Delta)
-ax.plot(k_x_values/k_F, E[:,0,0,0,1]/Delta)
-ax.plot(k_x_values/k_F, E[:,0,0,0,2]/Delta)
-ax.plot(k_x_values/k_F, E[:,0,0,0,3]/Delta)
+ax.plot(k_x_values, E[:,0,0,0,0]/Delta)
+ax.plot(k_x_values, E[:,0,0,0,1]/Delta)
+ax.plot(k_x_values, E[:,0,0,0,2]/Delta)
+ax.plot(k_x_values, E[:,0,0,0,3]/Delta)
 
-ax.set_xlabel(r"$\frac{k_x}{k_F}$")
+ax.set_xlabel(r"$k_x$")
 ax.set_ylabel(r"$\frac{E(k_x)}{\Delta}$")
+ax.set_title(f"w_0={w_0}; Delta={Delta}; mu={mu}; Lambda={Lambda:.2}; k_y=0; B={B}")
+plt.tight_layout()
