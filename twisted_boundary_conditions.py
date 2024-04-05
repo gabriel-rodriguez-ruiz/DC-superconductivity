@@ -231,14 +231,15 @@ plt.tight_layout()
 #%% Plot energy bands
 L_x = 1000
 L_y = 1
-w_0 = 1
-Delta = 0.1
-mu = 0#20*Delta-4*w_0
+w_0 = -10
+Delta = 0.2
+mu = 2*(20*Delta+2*w_0) #0
+k_F = np.sqrt((-4*w_0 + mu)/(-w_0))
 theta = np.pi/2
-B = 0
+B = 1
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
-Lambda = 2
+Lambda = 5*Delta/np.sqrt((-4*w_0 + mu)/(-w_0)) #5*Delta/k_F
 phi_x_values = [0]
 phi_y_values = [0]    #np.linspace(0, np.pi, 1)
 k_x_values = np.pi/L_x*np.arange(-L_x, L_x)
@@ -258,8 +259,10 @@ fig, ax = plt.subplots()
 # ax.plot(k_x_values, E[:,0,0,0,1]/Delta)
 # ax.plot(k_x_values, E[:,0,0,0,2]/Delta)
 # ax.plot(k_x_values, E[:,0,0,0,3]/Delta)
-k_F = 1#k_x_values[np.where(E[:,0,0,0,1]==max(E[:,0,0,0,1]))[0][0]]#np.arctan(1/Lambda)#2*Lambda
-ax.plot(k_x_values/k_F, E[:,0,0,0,0], "o")
-ax.plot(k_x_values/k_F, E[:,0,0,0,1], "o")
-ax.plot(k_x_values/k_F, E[:,0,0,0,2], "o")
-ax.plot(k_x_values/k_F, E[:,0,0,0,3], "o")
+ax.plot(k_x_values/k_F, E[:,0,0,0,0]/Delta)
+ax.plot(k_x_values/k_F, E[:,0,0,0,1]/Delta)
+ax.plot(k_x_values/k_F, E[:,0,0,0,2]/Delta)
+ax.plot(k_x_values/k_F, E[:,0,0,0,3]/Delta)
+
+ax.set_xlabel(r"$\frac{k_x}{k_F}$")
+ax.set_ylabel(r"$\frac{E(k_x)}{\Delta}$")
