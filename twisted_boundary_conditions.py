@@ -19,10 +19,10 @@ def get_Hamiltonian(k_x, k_y, phi_x, phi_y, w_0, mu, Delta, B_x, B_y, Lambda):
                    * np.kron(tau_z, sigma_0)
                    - (np.sin(k_x)*np.sin(phi_x) + np.sin(k_y)*np.sin(phi_y))
                    * np.kron(tau_0, sigma_0)) - mu * np.kron(tau_z, sigma_0)
-            + 2*Lambda*(np.sin(k_x)*np.cos(phi_x) * np.kron(tau_0, sigma_y)
-                        + np.cos(k_x)*np.sin(phi_x) * np.kron(tau_z, sigma_y)
-                        - np.sin(k_y)*np.cos(phi_y) * np.kron(tau_0, sigma_x)
-                        - np.cos(k_y)*np.sin(phi_y) * np.kron(tau_z, sigma_x))
+            + 2*Lambda*(np.sin(k_x)*np.cos(phi_x) * np.kron(tau_z, sigma_y)
+                        + np.cos(k_x)*np.sin(phi_x) * np.kron(tau_0, sigma_y)
+                        - np.sin(k_y)*np.cos(phi_y) * np.kron(tau_z, sigma_x)
+                        - np.cos(k_y)*np.sin(phi_y) * np.kron(tau_0, sigma_x))
             - B_x*np.kron(tau_0, sigma_x) - B_y*np.kron(tau_0, sigma_y)
             + Delta*np.kron(tau_x, sigma_0)
             ) * 1/2
@@ -236,7 +236,7 @@ Delta = 0.2
 mu = 2*(20*Delta+2*w_0)#0
 k_F = np.sqrt((-4*w_0 + mu)/(-w_0))
 theta = np.pi/2
-B = 0
+B = 0.1
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.2#5*Delta/np.sqrt((-4*w_0 + mu)/(-w_0)) #5*Delta/k_F
