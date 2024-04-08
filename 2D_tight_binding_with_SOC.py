@@ -17,15 +17,15 @@ def G_k(k_x, k_y, omega, w_0, Gamma, B_x, B_y, Delta, mu, Lambda):
     .. math ::
         w_k(t=0)= (2 w_0 \cos(k) - \mu ) \tau_z\sigma_0
         
-        \lambda_{k_x} = 2\lambda \sin(k_x)\tau_0\sigma_y
+        \lambda_{k_x} = 2\lambda \sin(k_x)\tau_z\sigma_y
         
-        \lambda_{k_y} = -2\lambda \sin(k_y)\tau_0\sigma_x
+        \lambda_{k_y} = -2\lambda \sin(k_y)\tau_z\sigma_x
         
         G^f_{k}(t=0,\omega)=\left[\omega\tau_0\sigma_0-(w_{k}(t=0) -\lambda_{k_x}-\lambda_{k_y} -B_x\tau_0\sigma_x-B_y\tau_0\sigma_y +\Delta\tau_x\sigma_0)+i \Gamma\tau_0\sigma_0 \right]^{-1}
     
     """
-    Lambda_x = 2*Lambda*np.sin(k_x)*np.kron(tau_0, sigma_y)
-    Lambda_y = -2*Lambda*np.sin(k_y)*np.kron(tau_0, sigma_x)
+    Lambda_x = 2*Lambda*np.sin(k_x)*np.kron(tau_z, sigma_y)
+    Lambda_y = -2*Lambda*np.sin(k_y)*np.kron(tau_z, sigma_x)
     H_k = (
         (2*w_0*np.cos(k_x)+2*w_0*np.cos(k_y)-mu)*np.kron(tau_z, sigma_0)
         - B_x*np.kron(tau_0, sigma_x) - B_y*np.kron(tau_0, sigma_y)
@@ -45,11 +45,11 @@ def get_Q_k(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta, Alpha, B
     sumand = np.zeros((len(epsilon_n)), dtype=complex)
     v_x = (
            -2*w_0*np.sin(k_x) * np.kron(tau_z, sigma_0)
-           +2*Lambda*np.cos(k_x) * np.kron(tau_z, sigma_y)
+           +2*Lambda*np.cos(k_x) * np.kron(tau_0, sigma_y)
            )
     v_y = (
            -2*w_0*np.sin(k_y) * np.kron(tau_z, sigma_0)
-           -2*Lambda*np.cos(k_y) * np.kron(tau_z, sigma_x)
+           -2*Lambda*np.cos(k_y) * np.kron(tau_0, sigma_x)
            )
     for i in range(len(epsilon_n)):
         G = G_k(
@@ -188,17 +188,17 @@ np.savez("Large_L_limit_for Q", L_values=L_values, n_L=n_L, Lambda=Lambda,
 #%% Q vs. B
 
 beta = 100
-N = 100
+N = 10
 Gamma = 0.01
-mu = 0
-w_0 = 1
-Delta = 0.1
+w_0 = -10
+Delta = 0.2
+mu = 2*(20*Delta+2*w_0)
 theta = np.pi/2
 B_values = np.linspace(0, 3*Delta, 10)
-Lambda = 0.1
+Lambda = 5*Delta/np.sqrt((-4*w_0 + mu)/(-w_0))
 Alpha = 0
 Beta = 0
-L = 100
+L = 10
 k_x = 2*np.pi/L*np.arange(0, L)
 k_y = 2*np.pi/L*np.arange(0, L)
 

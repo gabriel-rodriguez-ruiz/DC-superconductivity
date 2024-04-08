@@ -55,14 +55,14 @@ def get_superconducting_density(L_x, L_y, phi_x_values, phi_y_values, w_0, mu, D
 #%%
 L_x = 10
 L_y = 10
-w_0 = 1
-mu = 0
-Delta = 0.1
+w_0 = -10
+Delta = 0.2
+mu = 2*(20*Delta+2*w_0)
 theta = np.pi/2
-B = 1
+B = 3*Delta
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
-Lambda = 0.1
+Lambda = 5*Delta/np.sqrt((-4*w_0 + mu)/(-w_0))
 phi_x_values = np.linspace(-np.pi/10000, np.pi/10000, 10)
 phi_y_values = [0]    #np.linspace(0, np.pi, 1)
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
@@ -127,15 +127,15 @@ n_s = 1/(L_x*L_y) * D_s[len(phi_x_values)//2]
 
 #%% Superconducting density vs. 1/(L_x*L_y)
 
-L_values = np.linspace(10, 200, 10, dtype=int)
-w_0 = 1
-mu = 0
-Delta = 0.1
+L_values = np.linspace(10, 50, 10, dtype=int)
+w_0 = -10
+Delta = 0.2
+mu = 2*(20*Delta+2*w_0)
 theta = np.pi/2
-B = 0.05
+B = 3*Delta
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
-Lambda = 0.1
+Lambda = 5*Delta/np.sqrt((-4*w_0 + mu)/(-w_0))
 phi_x_values = np.linspace(-1/10000, 1/10000, 10)
 phi_y_values = [0]    #np.linspace(0, np.pi, 1)
 
@@ -170,14 +170,14 @@ np.savez("Large_L_limit", L=L, n_L=n_L, Lambda=Lambda,
 
 #%% Angular dependence
 
-L_x = 50
-L_y = 50
+L_x = 10
+L_y = 10
 w_0 = -10
 mu = 0
-Delta = 0.1
+Delta = 0.2
 theta_values = np.linspace(0, np.pi/2, 10)
-B = 0.05
-Lambda = 0.1
+B = 3*Delta
+Lambda = 5*Delta/np.sqrt((-4*w_0 + mu)/(-w_0))
 phi_x_values = np.linspace(-np.pi/10000, np.pi/10000, 10)
 phi_y_values = [0]    #np.linspace(0, np.pi, 1)
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
@@ -209,7 +209,7 @@ Delta = 0.2
 mu = 2*(20*Delta+2*w_0)
 theta = np.pi/2
 B_values = np.linspace(0, 3*Delta, 10)
-Lambda = 0.1
+Lambda = 5*Delta/np.sqrt((-4*w_0 + mu)/(-w_0))
 phi_x_values = np.linspace(-np.pi/10000, np.pi/10000, 10)
 phi_y_values = [0]    #np.linspace(0, np.pi, 1)
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
@@ -236,10 +236,10 @@ Delta = 0.2
 mu = 2*(20*Delta+2*w_0)#0
 k_F = np.sqrt((-4*w_0 + mu)/(-w_0))
 theta = np.pi/2
-B = 0.1
+B = 3*Delta
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
-Lambda = 0.2#5*Delta/np.sqrt((-4*w_0 + mu)/(-w_0)) #5*Delta/k_F
+Lambda = 5*Delta/np.sqrt((-4*w_0 + mu)/(-w_0)) #5*Delta/k_F
 phi_x_values = [0]
 phi_y_values = [0]    #np.linspace(0, np.pi, 1)
 k_x_values = np.pi/L_x*np.arange(-L_x, L_x)
