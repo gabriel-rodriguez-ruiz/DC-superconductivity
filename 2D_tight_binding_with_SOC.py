@@ -27,7 +27,7 @@ def G_k(k_x, k_y, omega, w_0, Gamma, B_x, B_y, Delta, mu, Lambda):
     Lambda_x = 2*Lambda*np.sin(k_x)*np.kron(tau_z, sigma_y)
     Lambda_y = -2*Lambda*np.sin(k_y)*np.kron(tau_z, sigma_x)
     H_k = (
-        (2*w_0*np.cos(k_x)+2*w_0*np.cos(k_y)-mu)*np.kron(tau_z, sigma_0)
+        (-2*w_0*np.cos(k_x)-2*w_0*np.cos(k_y)-mu)*np.kron(tau_z, sigma_0)
         - B_x*np.kron(tau_0, sigma_x) - B_y*np.kron(tau_0, sigma_y)
         + Delta*np.kron(tau_x, sigma_0)
         + Lambda_x + Lambda_y
