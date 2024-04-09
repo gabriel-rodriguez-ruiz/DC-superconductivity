@@ -39,7 +39,7 @@ theta = np.pi/2
 B = 3*Delta
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
-Lambda = 0.1#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
+Lambda = 5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 k_x_values = np.pi/L_x*np.arange(-L_x, L_x)
 k_y_values = [0]
 
@@ -52,5 +52,5 @@ ax.plot(k_x_values, mu*np.ones_like(k_x_values), "--")
 
 ax.set_ylabel(r"$\epsilon(k_y=0)$")
 ax.set_xlabel(r"$k_x$")
-ax.set_title(f"w_0={w_0}; mu={mu}; Lambda={Lambda:.2}; k_y=0; Bx={B_x:.2}; By={B_y:.2}")
+ax.set_title(f"w_0={w_0}; mu={mu}; Lambda={Lambda:.2}; k_y=0; theta={theta:.2}; B={B:.2}")
 plt.tight_layout()
