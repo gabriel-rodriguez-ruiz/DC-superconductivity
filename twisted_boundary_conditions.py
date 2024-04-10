@@ -69,19 +69,19 @@ def get_DOS(omega, eta, L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda):
     k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
     k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
     G = get_Green_function(omega+1j*eta, k_x_values, k_y_values, w_0, mu, Delta, B_x, B_y, Lambda)
-    return 1/(L_x*L_y) * 1/np.pi*np.sum(-np.imag(G[:,:,0,0]))
+    return 1/(L_x*L_y) * 1/np.pi*np.sum(-np.imag(G), axis=(0,1))
 
 #%% Superconducting density vs. 1/(L_x*L_y)
 
 L_values = np.linspace(10, 200, 10, dtype=int)
 w_0 = 10
 Delta = 0.2
-mu = 2*(20*Delta-2*w_0)
+mu = -32
 theta = np.pi/2
-B = Delta
+B = 3*Delta
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
-Lambda = 5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
+Lambda = 0.56
 h = 1e-2
 
 
@@ -123,11 +123,11 @@ np.savez("Large_L_limit", L=L, n_L=n_L, Lambda=Lambda,
 L_x = 200
 L_y = 200
 w_0 = 10
-mu = 2*(20*Delta-2*w_0)
 Delta = 0.2
+mu = 2*(20*Delta-2*w_0)
 theta_values = np.linspace(0, np.pi/2, 10)
 B = 0.5*Delta
-Lambda = 0.1
+Lambda = 5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 h = 1e-2
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
@@ -144,6 +144,7 @@ ax.plot(theta_values, n_theta[:,0], "o", label=r"$n_{s,\perp}$")
 ax.plot(theta_values, n_theta[:,1], "o", label=r"$n_{s,\parallel}$")
 ax.set_xlabel(r"$\theta$")
 ax.set_ylabel(r"$n_{\theta}$")
+ax.legend()
 plt.tight_layout()
 
 #%% Load data
@@ -156,10 +157,10 @@ L_x = 200
 L_y = 200
 w_0 = 10
 Delta = 0.2
-mu = 2*(20*Delta-2*w_0)
+mu = -32#2*(20*Delta-2*w_0)
 theta = np.pi/2
 B_values = np.linspace(0, 3*Delta, 10)
-Lambda = 5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
+Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 h = 1e-2
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
@@ -189,6 +190,26 @@ plt.tight_layout()
 np.savez("n_By", h=h, L_x=L_x, L_y=L_y, n_B_y=n_B_y, Lambda=Lambda,
          Delta=Delta, B_values=B_values, theta=theta, mu=mu, w_0=w_0)
 
+#%% Load data
+
+data = np.load("n_By.npz")
+n_B_y = data["n_B_y"]
+B_values = data["B_values"]
+Delta = data["Delta"]
+
+fig, ax = plt.subplots()
+ax.plot(B_values/Delta, n_B_y[:,0], "-o",  label=r"$n_{s,\perp}$")
+ax.plot(B_values/Delta, n_B_y[:,1], "-o",  label=r"$n_{s,\parallel}$")
+ax.set_title(r"$\lambda=$" + f"{Lambda:.2}"
+             +r"; $\Delta=$" + f"{Delta}"
+             +r"; $\theta=$" + f"{theta:.3}"
+             +f"; B={B:.2}" + r"; $\mu$"+f"={mu}"
+             +r"; $w_0$"+f"={w_0}")
+ax.set_xlabel(r"$\frac{B_y}{\Delta}$")
+ax.set_ylabel(r"$n(B_y)$")
+ax.legend()
+plt.tight_layout()
+
 #%% Plot energy bands
 L_x = 1000
 L_y = 1
@@ -200,11 +221,11 @@ theta = np.pi/2
 B = 0
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
-Lambda = 0.1#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2 #5*Delta/k_F
+Lambda = 5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2 #5*Delta/k_F
 phi_x_values = [0]
 phi_y_values = [0]    #np.linspace(0, np.pi, 1)
 k_x_values = np.pi/L_x*np.arange(-L_x, L_x)
-k_y_values = [0]#np.pi/L_y*np.arange(-L_y, L_y)
+k_y_values = [np.pi/4]#np.pi/L_y*np.arange(-L_y, L_y)
 
 params = {"L_x":L_x, "L_y":L_y, "w_0":w_0, "Delta":Delta,
           "mu":mu, "phi_x_values":phi_x_values,
@@ -231,8 +252,8 @@ ax.set_title(f"w_0={w_0}; Delta={Delta}; mu={mu}; Lambda={Lambda:.2}; k_y=0; Bx=
 plt.tight_layout()
 
 #%% Density of states
-L_x = 20
-L_y = 20
+L_x = 10
+L_y = 10
 w_0 = 10
 Delta = 0.2
 mu = 2*(20*Delta-2*w_0)
@@ -241,13 +262,19 @@ B = 0
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
-omega_values = np.linspace(0, 4*Delta, 50)
+omega_values = np.linspace(-4*Delta, 4*Delta, 50)
 eta = Delta/5
 
-DOS = np.zeros(len(omega_values))
+DOS = np.zeros((len(omega_values), 4, 4))
 for i, omega in enumerate(omega_values):
-    DOS[i] = get_DOS(omega, eta, L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda)
+    for j in range(4):
+        for k in range(4):
+            DOS[i, j, k] = get_DOS(omega, eta, L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda)[j, k]
     print(i)
 
 fig, ax = plt.subplots()
-ax.plot(omega_values/Delta, DOS)
+ax.plot(omega_values/Delta, DOS[:, 0, 0])
+ax.plot(omega_values/Delta, DOS[:, 1, 1])
+
+ax.set_ylabel(r"$\rho(\omega)$")
+ax.set_xlabel(r"$\frac{\omega}{\Delta}$")
