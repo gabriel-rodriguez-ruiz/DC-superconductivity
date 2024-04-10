@@ -69,7 +69,7 @@ def get_DOS(omega, eta, L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda):
     k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
     k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
     G = get_Green_function(omega+1j*eta, k_x_values, k_y_values, w_0, mu, Delta, B_x, B_y, Lambda)
-    return 1/(L_x*L_y) * np.sum(-2*np.imag(G[:,:,0,0]))
+    return 1/(L_x*L_y) * 1/np.pi*np.sum(-np.imag(G[:,:,0,0]))
 
 #%% Superconducting density vs. 1/(L_x*L_y)
 
@@ -231,8 +231,8 @@ ax.set_title(f"w_0={w_0}; Delta={Delta}; mu={mu}; Lambda={Lambda:.2}; k_y=0; Bx=
 plt.tight_layout()
 
 #%% Density of states
-L_x = 30
-L_y = 30
+L_x = 20
+L_y = 20
 w_0 = 10
 Delta = 0.2
 mu = 2*(20*Delta-2*w_0)
@@ -241,8 +241,8 @@ B = 0
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
-omega_values = np.linspace(0, 10*Delta, 20)
-eta = 0.01
+omega_values = np.linspace(0, 4*Delta, 50)
+eta = Delta/5
 
 DOS = np.zeros(len(omega_values))
 for i, omega in enumerate(omega_values):
