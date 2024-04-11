@@ -120,12 +120,12 @@ np.savez("Large_L_limit", L=L, n_L=n_L, Lambda=Lambda,
 
 #%% Angular dependence
 
-L_x = 200
-L_y = 200
+L_x = 150
+L_y = 150
 w_0 = 10
 Delta = 0.2
 mu = 2*(20*Delta-2*w_0)
-theta_values = np.linspace(0, np.pi/2, 10)
+theta_values = np.linspace(0, np.pi, 20)
 B = 0.5*Delta
 Lambda = 5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 h = 1e-2
@@ -138,10 +138,22 @@ for i, theta in enumerate(theta_values):
     B_y = B * np.sin(theta)
     n_theta[i,0], n_theta[i,1] = get_superconducting_density(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda, h)
     print(i)
-    
+
 fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
-ax.plot(theta_values, n_theta[:,0], "o", label=r"$n_{s,\perp}$")
-ax.plot(theta_values, n_theta[:,1], "o", label=r"$n_{s,\parallel}$")
+ax.plot(theta_values, n_theta[:,0], "or", label=r"$n_{s,\perp}$")
+ax.plot(theta_values, n_theta[:,1], "ob", label=r"$n_{s,\parallel}$")
+ax.plot(theta_values, np.sqrt(n_theta[:,0]**2+n_theta[:,1]**2), "og", label=r"$|n_s|^2$")
+# ax.plot(theta_values+np.pi/2, n_theta[:,0], "or", label=r"$n_{s,\perp}$")
+# ax.plot(theta_values+np.pi/2, n_theta[:,1], "ob", label=r"$n_{s,\parallel}$")
+# ax.plot(theta_values+np.pi/2, np.sqrt(n_theta[:,0]**2+n_theta[:,1]**2), "og", label=r"$|n_s|^2$")
+# ax.plot(theta_values+np.pi, n_theta[:,0], "or", label=r"$n_{s,\perp}$")
+# ax.plot(theta_values+np.pi, n_theta[:,1], "ob", label=r"$n_{s,\parallel}$")
+# ax.plot(theta_values+np.pi, np.sqrt(n_theta[:,0]**2+n_theta[:,1]**2), "og", label=r"$|n_s|^2$")
+# ax.plot(theta_values+3*np.pi/2, n_theta[:,0], "or", label=r"$n_{s,\perp}$")
+# ax.plot(theta_values+3*np.pi/2, n_theta[:,1], "ob", label=r"$n_{s,\parallel}$")
+# ax.plot(theta_values+3*np.pi/2, np.sqrt(n_theta[:,0]**2+n_theta[:,1]**2), "og", label=r"$|n_s|^2$")
+
+
 ax.set_xlabel(r"$\theta$")
 ax.set_ylabel(r"$n_{\theta}$")
 ax.legend()
