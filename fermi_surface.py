@@ -39,18 +39,18 @@ def get_Green_function(omega, k_x_values, k_y_values, w_0, B_x, B_y, Lambda):
                                     get_Hamiltonian_without_superconductivity(k_x, k_y, w_0, B_x, B_y, Lambda))[k, l]
     return G
 
-def get_DOS(omega, eta, L_x, L_y, w_0, mu, B_x, B_y, Lambda):
+def get_DOS(omega_values, eta, L_x, L_y, w_0, B_x, B_y, Lambda):
     k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
     k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
     E = get_Energy_without_superconductivity(k_x_values, k_y_values, w_0, B_x, B_y, Lambda)
-    return 1/(L_x*L_y) * (-1)/np.pi*np.sum(np.imag(1/(omega-E+1j*eta)))
-
-def get_normal_density(omega_values, eta, L_x, L_y, w_0, mu, B_x, B_y, Lambda):
     DOS = np.zeros(len(omega_values))
     for i, omega in enumerate(omega_values):
-        DOS[i] = np.trace(get_DOS(omega, eta, L_x, L_y, w_0, mu, B_x, B_y, Lambda))
-        print(i)
-    return np.sum(DOS)
+        DOS[i] = 1/(L_x*L_y) * (-1)/np.pi*np.sum(np.imag(1/(omega-E[:,:,0]+1j*eta)))
+    return DOS
+    
+def get_normal_density(omega_values, mu, eta, L_x, L_y, w_0, B_x, B_y, Lambda):
+    DOS = get_DOS(omega_values, eta, L_x, L_y, w_0, B_x, B_y, Lambda)
+    return np.sum(DOS[omega_values<mu])*np.diff(omega_values)[0]
     
 #%%
 L_x = 1000
@@ -88,13 +88,13 @@ B = 0
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.56
-omega_values = np.linspace(-10+mu, 0, 500)
-eta = 0.1
+omega_values = np.linspace(-10+mu, 0, 1000)
+eta = 0.01
 
-DOS = np.zeros(len(omega_values))
-for i, omega in enumerate(omega_values):
-    DOS[i] = get_DOS(omega, eta, L_x, L_y, w_0, mu, B_x, B_y, Lambda)
-    print(i)
+
+DOS = get_DOS(omega_values, eta, L_x, L_y, w_0, B_x, B_y, Lambda)
+S = np.sum(DOS[omega_values<0])*np.diff(omega_values)[0]
+M = np.sum(DOS[omega_values<mu])*np.diff(omega_values)[0]
 
 fig, ax = plt.subplots()
 ax.plot(omega_values, DOS)
@@ -115,7 +115,7 @@ Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 h = 1e-2
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
-omega_values = np.linspace(-10+mu, mu, 100)
+omega_values = np.linspace(-10+mu, mu, 1000)
 eta = 0.1
 
 n_B_y = np.zeros(len(B_values))
