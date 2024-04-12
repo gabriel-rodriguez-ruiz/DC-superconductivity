@@ -88,12 +88,12 @@ B = 0
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.56
-omega_values = np.linspace(-10+mu, 0, 1000)
-eta = 0.01
+omega_values = np.linspace(-10+mu, -mu+10, 10000)
+eta = 0.1
 
 
 DOS = get_DOS(omega_values, eta, L_x, L_y, w_0, B_x, B_y, Lambda)
-S = np.sum(DOS[omega_values<0])*np.diff(omega_values)[0]
+S = np.sum(DOS)*np.diff(omega_values)[0]
 M = np.sum(DOS[omega_values<mu])*np.diff(omega_values)[0]
 
 fig, ax = plt.subplots()

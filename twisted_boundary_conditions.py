@@ -181,7 +181,7 @@ h = 1e-2
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
 
-n_B_y = np.zeros((len(B_values), 2))
+n_B_y = np.zeros((len(B_values), 3))
 n = np.zeros(len(B_values))
 for i, B in enumerate(B_values):
     B_x = B * np.cos(theta)
@@ -220,7 +220,7 @@ ax.plot(B_values/Delta, n_B_y[:,1]/n, "-o",  label=r"$n_{s,\parallel}$")
 ax.set_title(r"$\lambda=$" + f"{Lambda:.2}"
              +r"; $\Delta=$" + f"{Delta}"
              +r"; $\theta=$" + f"{theta:.3}"
-             +f"; B={B:.2}" + r"; $\mu$"+f"={mu}"
+              + r"; $\mu$"+f"={mu}"
              +r"; $w_0$"+f"={w_0}")
 ax.set_xlabel(r"$\frac{B_y}{\Delta}$")
 ax.set_ylabel(r"$\frac{n(B_y)}{n}$")
@@ -232,13 +232,13 @@ L_x = 1000
 L_y = 1
 w_0 = 10
 Delta = 0.2
-mu = 2*(20*Delta-2*w_0)#0
+mu = -32#0
 k_F = np.sqrt((4*w_0 + mu)/(w_0))
 theta = np.pi/2
 B = 0
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
-Lambda = 5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2 #5*Delta/k_F
+Lambda = 0.56 #5*Delta/k_F
 phi_x_values = [0]
 phi_y_values = [0]    #np.linspace(0, np.pi, 1)
 k_x_values = np.pi/L_x*np.arange(-L_x, L_x)

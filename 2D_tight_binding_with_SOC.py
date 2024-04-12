@@ -146,12 +146,12 @@ N = 100
 Gamma = 0.01
 mu = 0
 w_0 = 1
-Delta = 0.1
+Delta = 0.2
 theta = np.pi/2
-B = 0.05
+B = 0
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
-Lambda = 0.1
+Lambda = 0.56
 Alpha = 0
 Beta = 0
 
@@ -187,18 +187,18 @@ np.savez("Large_L_limit_for Q", L_values=L_values, n_L=n_L, Lambda=Lambda,
 
 #%% Q vs. B
 
-beta = 100
+beta = 10
 N = 10
-Gamma = 0.01
-w_0 = -10
+Gamma = 0.01    
+w_0 = 10
 Delta = 0.2
-mu = 2*(20*Delta+2*w_0)
+mu = -32
 theta = np.pi/2
 B_values = np.linspace(0, 3*Delta, 10)
-Lambda = 5*Delta/np.sqrt((-4*w_0 + mu)/(-w_0))
-Alpha = 0
-Beta = 0
-L = 10
+Lambda = 0.56
+Alpha = 1   
+Beta = 1
+L = 200
 k_x = 2*np.pi/L*np.arange(0, L)
 k_y = 2*np.pi/L*np.arange(0, L)
 
@@ -206,7 +206,7 @@ n_B_y = np.zeros(len(B_values))
 for i, B in enumerate(B_values):
     B_x = B * np.cos(theta)
     B_y = B * np.sin(theta)
-    n_B_y[i] = -(
+    n_B_y[i] = (
               get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta, Alpha, Beta)
               - get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, 0, mu, Lambda, N, beta, Alpha, Beta)
               )
