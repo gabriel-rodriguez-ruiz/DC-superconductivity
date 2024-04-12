@@ -115,7 +115,7 @@ Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 h = 1e-2
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
-omega_values = np.linspace(-10+mu, mu, 50)
+omega_values = np.linspace(-10+mu, mu, 100)
 eta = 0.1
 
 n_B_y = np.zeros(len(B_values))
