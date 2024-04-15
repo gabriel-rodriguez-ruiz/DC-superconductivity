@@ -141,21 +141,21 @@ Q = get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta, Alpha, Bet
 
 #%% Q vs. L
 
-beta = 10
+beta = 100
 N = 100
 Gamma = 0.01
 mu = 0
 w_0 = 1
-Delta = 0.1
+Delta = 0.2
 theta = np.pi/2
-B = 0.05
+B = 0
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
-Lambda = 0.1
-Alpha = 0
-Beta = 0
+Lambda = 0.56
+Alpha = 1
+Beta = 1
 
-L_values = np.linspace(10, 200, 10, dtype=int)
+L_values = np.linspace(10, 100, 10, dtype=int)
 
 n_L = np.zeros(len(L_values))
 for i, L in enumerate(L_values):
@@ -184,21 +184,31 @@ plt.tight_layout()
 #%% Saving
 np.savez("Large_L_limit_for Q", L_values=L_values, n_L=n_L, Lambda=Lambda,
          Delta=Delta, B=B, theta=theta)
+#%% Loading
+data = np.load("Large_L_limit_for Q.npz")
+L_values = data["L_values"]
+n_L = data["n_L"]
+
+fig, ax = plt.subplots()
+ax.plot(L_values, n_L, "o")
+ax.set_xlabel("L")
+ax.set_ylabel(r"$Q_{xx}$")
+plt.tight_layout()
 
 #%% Q vs. B
 
 beta = 100
-N = 10
-Gamma = 0.01
-w_0 = -10
+N = 200
+Gamma = 0.01    
+w_0 = 10
 Delta = 0.2
-mu = 2*(20*Delta+2*w_0)
+mu = -32
 theta = np.pi/2
 B_values = np.linspace(0, 3*Delta, 10)
-Lambda = 5*Delta/np.sqrt((-4*w_0 + mu)/(-w_0))
-Alpha = 0
-Beta = 0
-L = 10
+Lambda = 0.56
+Alpha = 1   
+Beta = 1
+L = 50
 k_x = 2*np.pi/L*np.arange(0, L)
 k_y = 2*np.pi/L*np.arange(0, L)
 
@@ -216,4 +226,41 @@ fig, ax = plt.subplots()
 ax.plot(B_values/Delta, n_B_y, "o")
 ax.set_xlabel(r"$\frac{B_y}{\Delta}$")
 ax.set_ylabel(r"$n(B_y)$")
+plt.tight_layout()
+
+#%% Q vs. N
+
+beta = 1000
+L = 50
+Gamma = 0.01
+mu = -32
+w_0 = 10
+Delta = 0.2
+theta = np.pi/2
+B = 3*Delta
+B_x = B * np.cos(theta)
+B_y = B * np.sin(theta)
+Lambda = 0.56
+Alpha = 1   
+Beta = 1
+k_x = 2*np.pi/L*np.arange(0, L)
+k_y = 2*np.pi/L*np.arange(0, L)
+N_values = np.linspace(10, 100, 10, dtype=int)
+
+n_N = np.zeros(len(N_values))
+for i, N in enumerate(N_values):
+    n_N[i] = -(
+              get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta, Alpha, Beta)
+              - get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, 0, mu, Lambda, N, beta, Alpha, Beta)
+              )
+    print(i)
+    
+fig, ax = plt.subplots()
+ax.plot(N_values, n_N, "o")
+ax.set_xlabel("N")
+ax.set_ylabel(r"$Q_{xx}$")
+ax.set_title(r"$\lambda=$" + f"{Lambda}"
+             +r"; $\Delta=$" + f"{Delta}"
+             +r"; $\theta=$" + f"{theta:.3}"
+             +f"; B={B}")
 plt.tight_layout()

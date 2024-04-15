@@ -19,23 +19,23 @@ def G_k(k, epsilon_n, w_0, Gamma, mu):
         
         \epsilon_n=2\pi/\beta\left(n+\frac{1}{2}\right)
     """
-    h_0 = 2*w_0*np.cos(k)-mu
+    h_0 = -2*w_0*np.cos(k)-mu
     return 1/(1j*epsilon_n+1j*np.sign(epsilon_n)*Gamma-h_0)
 
 def G_frozen(k, omega, w_0, Gamma, mu):
-    h_0 = 2*w_0*np.cos(k)-mu
+    h_0 = -2*w_0*np.cos(k)-mu
     return 1/(omega+1j*Gamma-h_0)    
 
 def get_Q_k(k, w_0, Gamma, mu, N, beta, Omega):
     epsilon_n = np.pi/beta*(2*np.arange(-N, N) + 1)
     sumand = np.zeros_like(epsilon_n, dtype=complex)
     for i in range(len(epsilon_n)):
-        v = -2*w_0*np.sin(k)
+        v = 2*w_0*np.sin(k)
         sumand[i] = (v**2)*G_k(k, epsilon_n[i]+Omega, w_0, Gamma, mu)*G_k(k, epsilon_n[i], w_0, Gamma, mu)
     return -1/(beta)*np.sum(sumand, dtype=complex)
 
 def Rho_k(k, omega, w_0, Gamma, mu):
-    h_0 = 2*w_0*np.cos(k)-mu
+    h_0 = -2*w_0*np.cos(k)-mu
     return 2*Gamma/((omega+1j*Gamma-h_0)*(omega-1j*Gamma-h_0))
 
 def G_k_Matsubara(k, epsilon_n, omega, w_0, Gamma, mu):

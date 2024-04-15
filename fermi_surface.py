@@ -45,7 +45,7 @@ def get_DOS(omega_values, eta, L_x, L_y, w_0, B_x, B_y, Lambda):
     E = get_Energy_without_superconductivity(k_x_values, k_y_values, w_0, B_x, B_y, Lambda)
     DOS = np.zeros(len(omega_values))
     for i, omega in enumerate(omega_values):
-        DOS[i] = 1/(L_x*L_y) * (-1)/np.pi*np.sum(np.imag(1/(omega-E[:,:,0]+1j*eta)))
+        DOS[i] = 1/(L_x*L_y) * (-1)/np.pi*np.sum(np.imag(1/(omega-E+1j*eta)))
     return DOS
     
 def get_normal_density(omega_values, mu, eta, L_x, L_y, w_0, B_x, B_y, Lambda):
@@ -88,12 +88,12 @@ B = 0
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.56
-omega_values = np.linspace(-10+mu, 0, 1000)
-eta = 0.01
+omega_values = np.linspace(-10+mu, -mu+10, 10000)
+eta = 0.1
 
 
 DOS = get_DOS(omega_values, eta, L_x, L_y, w_0, B_x, B_y, Lambda)
-S = np.sum(DOS[omega_values<0])*np.diff(omega_values)[0]
+S = np.sum(DOS)*np.diff(omega_values)[0]
 M = np.sum(DOS[omega_values<mu])*np.diff(omega_values)[0]
 
 fig, ax = plt.subplots()
