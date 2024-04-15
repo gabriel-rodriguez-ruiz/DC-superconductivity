@@ -196,7 +196,6 @@ ax.set_ylabel(r"$Q_{xx}$")
 plt.tight_layout()
 
 #%% Q vs. B
-
 beta = 100
 N = 200
 Gamma = 0.01    
@@ -216,7 +215,7 @@ n_B_y = np.zeros(len(B_values))
 for i, B in enumerate(B_values):
     B_x = B * np.cos(theta)
     B_y = B * np.sin(theta)
-    n_B_y[i] = -(
+    n_B_y[i] = (
               get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, Delta, mu, Lambda, N, beta, Alpha, Beta)
               - get_Q(k_x, k_y, w_0, Gamma, B_x, B_y, 0, mu, Lambda, N, beta, Alpha, Beta)
               )
