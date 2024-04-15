@@ -14,18 +14,19 @@ import matplotlib.pyplot as plt
 def get_Hamiltonian(k_x, k_y, phi_x, phi_y, w_0, mu, Delta, B_x, B_y, Lambda):
     """ Periodic Hamiltonian in x and y with flux.
     """
-    return (
-            -2*w_0*((np.cos(k_x)*np.cos(phi_x) + np.cos(k_y)*np.cos(phi_y))
-                   * np.kron(tau_z, sigma_0)
-                   - (np.sin(k_x)*np.sin(phi_x) + np.sin(k_y)*np.sin(phi_y))
-                   * np.kron(tau_0, sigma_0)) - mu * np.kron(tau_z, sigma_0)
-            + 2*Lambda*(np.sin(k_x)*np.cos(phi_x) * np.kron(tau_z, sigma_y)
-                        + np.cos(k_x)*np.sin(phi_x) * np.kron(tau_0, sigma_y)
-                        - np.sin(k_y)*np.cos(phi_y) * np.kron(tau_z, sigma_x)
-                        - np.cos(k_y)*np.sin(phi_y) * np.kron(tau_0, sigma_x))
-            - B_x*np.kron(tau_0, sigma_x) - B_y*np.kron(tau_0, sigma_y)
-            + Delta*np.kron(tau_x, sigma_0)
+    H = (
+        -2*w_0*((np.cos(k_x)*np.cos(phi_x) + np.cos(k_y)*np.cos(phi_y))
+               * np.kron(tau_z, sigma_0)
+               - (np.sin(k_x)*np.sin(phi_x) + np.sin(k_y)*np.sin(phi_y))
+               * np.kron(tau_0, sigma_0)) - mu * np.kron(tau_z, sigma_0)
+        + 2*Lambda*(np.sin(k_x)*np.cos(phi_x) * np.kron(tau_z, sigma_y)
+                    + np.cos(k_x)*np.sin(phi_x) * np.kron(tau_0, sigma_y)
+                    - np.sin(k_y)*np.cos(phi_y) * np.kron(tau_z, sigma_x)
+                    - np.cos(k_y)*np.sin(phi_y) * np.kron(tau_0, sigma_x))
+        - B_x*np.kron(tau_0, sigma_x) - B_y*np.kron(tau_0, sigma_y)
+        + Delta*np.kron(tau_x, sigma_0)
             )
+    return H
 
 def get_Energy(k_x_values, k_y_values, phi_x_values, phi_y_values, w_0, mu, Delta, B_x, B_y, Lambda):
     """
@@ -77,7 +78,7 @@ def get_DOS(omega, eta, L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda):
 L_values = np.linspace(10, 200, 10, dtype=int)
 w_0 = 10
 Delta = 0.2
-mu = -32
+mu = -80
 theta = np.pi/2
 B = 3*Delta
 B_x = B * np.cos(theta)
@@ -173,7 +174,7 @@ L_x = 200
 L_y = 200
 w_0 = 10
 Delta = 0.2
-mu = -32#2*(20*Delta-2*w_0)
+mu = -80#2*(20*Delta-2*w_0)
 theta = np.pi/2
 B_values = np.linspace(0, 3*Delta, 10)
 Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
@@ -210,9 +211,10 @@ np.savez("n_By", h=h, L_x=L_x, L_y=L_y, n_B_y=n_B_y, Lambda=Lambda,
 
 data = np.load("n_By.npz")
 n_B_y = data["n_B_y"]
-n = 1  #does not change approx. with magnetic field
+n = 1.32  #does not change approx. with magnetic field
 B_values = data["B_values"]
 Delta = data["Delta"]
+mu = data["mu"]
 
 fig, ax = plt.subplots()
 ax.plot(B_values/Delta, n_B_y[:,0]/n, "-o",  label=r"$n_{s,\perp}$")
@@ -232,8 +234,7 @@ L_x = 1000
 L_y = 1
 w_0 = 10
 Delta = 0.2
-mu = -32#0
-k_F = np.sqrt((4*w_0 + mu)/(w_0))
+mu = -10
 theta = np.pi/2
 B = 0
 B_x = B * np.cos(theta)
@@ -242,7 +243,7 @@ Lambda = 0.56 #5*Delta/k_F
 phi_x_values = [0]
 phi_y_values = [0]    #np.linspace(0, np.pi, 1)
 k_x_values = np.pi/L_x*np.arange(-L_x, L_x)
-k_y_values = [np.pi/4]#np.pi/L_y*np.arange(-L_y, L_y)
+k_y_values = [0]#np.pi/L_y*np.arange(-L_y, L_y)
 
 params = {"L_x":L_x, "L_y":L_y, "w_0":w_0, "Delta":Delta,
           "mu":mu, "phi_x_values":phi_x_values,
@@ -254,20 +255,30 @@ params = {"L_x":L_x, "L_y":L_y, "w_0":w_0, "Delta":Delta,
 E = get_Energy(k_x_values, k_y_values, phi_x_values, phi_y_values, w_0, mu, Delta, B_x, B_y, Lambda)
 
 fig, ax = plt.subplots()
+ax.plot(k_x_values, E[:,0,0,0,0])
+ax.plot(k_x_values, E[:,0,0,0,1])
+ax.plot(k_x_values, E[:,0,0,0,2])
+ax.plot(k_x_values, E[:,0,0,0,3])
 # ax.plot(k_x_values, E[:,0,0,0,0]/Delta)
 # ax.plot(k_x_values, E[:,0,0,0,1]/Delta)
 # ax.plot(k_x_values, E[:,0,0,0,2]/Delta)
 # ax.plot(k_x_values, E[:,0,0,0,3]/Delta)
-ax.plot(k_x_values, E[:,0,0,0,0]/Delta)
-ax.plot(k_x_values, E[:,0,0,0,1]/Delta)
-ax.plot(k_x_values, E[:,0,0,0,2]/Delta)
-ax.plot(k_x_values, E[:,0,0,0,3]/Delta)
 
 ax.set_xlabel(r"$k_x$")
 ax.set_ylabel(r"$\frac{E(k_x)}{\Delta}$")
 ax.set_title(f"w_0={w_0}; Delta={Delta}; mu={mu}; Lambda={Lambda:.2}; k_y=0; Bx={B_x:.2}; By={B_y:.2}")
 plt.tight_layout()
 
+L_x = 10
+k_x_values = np.pi/L_x*np.arange(-L_x, L_x)
+k_y_values = np.pi/L_x*np.arange(-L_x, L_x)
+E = get_Energy(k_x_values, k_y_values, phi_x_values, phi_y_values, w_0, mu, Delta, B_x, B_y, Lambda)
+
+X, Y = np.meshgrid(k_x_values, k_y_values)
+fig, ax = plt.subplots()
+Z = E[:,:,0,0,0] 
+CS = ax.contour(X, Y, Z)
+ax.clabel(CS, inline=True, fontsize=10)
 #%% Density of states
 L_x = 10
 L_y = 10

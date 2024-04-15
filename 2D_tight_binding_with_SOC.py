@@ -197,7 +197,7 @@ plt.tight_layout()
 
 #%% Q vs. B
 beta = 100
-N = 200
+N = 100
 Gamma = 0.01    
 w_0 = 10
 Delta = 0.2
@@ -205,7 +205,7 @@ mu = -32
 theta = np.pi/2
 B_values = np.linspace(0, 3*Delta, 10)
 Lambda = 0.56
-Alpha = 1   
+Alpha = 0   
 Beta = 1
 L = 50
 k_x = 2*np.pi/L*np.arange(0, L)

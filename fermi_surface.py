@@ -51,15 +51,15 @@ def get_DOS(omega_values, eta, L_x, L_y, w_0, B_x, B_y, Lambda):
 def get_normal_density(omega_values, mu, eta, L_x, L_y, w_0, B_x, B_y, Lambda):
     DOS = get_DOS(omega_values, eta, L_x, L_y, w_0, B_x, B_y, Lambda)
     return np.sum(DOS[omega_values<mu])*np.diff(omega_values)[0]
-    
+
 #%%
 L_x = 1000
 L_y = 1
 w_0 = 10
 Delta = 0.2
-mu = -40#2*(20*Delta-2*w_0)
+mu = 0 #2*(20*Delta-2*w_0)
 theta = np.pi/2
-B = 1*Delta
+B = 0#3*Delta
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
@@ -82,13 +82,13 @@ plt.tight_layout()
 L_x = 200
 L_y = 200
 w_0 = 10
-mu = -32
+mu = 0 + 4*w_0
 theta = np.pi/2
 B = 0
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.56
-omega_values = np.linspace(-10+mu, -mu+10, 10000)
+omega_values = np.linspace(6*mu, -6*mu, 10000)
 eta = 0.1
 
 
@@ -108,15 +108,15 @@ L_x = 200
 L_y = 200
 w_0 = 10
 Delta = 0.2
-mu = -32#2*(20*Delta-2*w_0)
-theta = np.pi/2
+mu = -32 + 4*w_0
 B_values = np.linspace(0, 3*Delta, 10)
+theta = np.pi/2
 Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 h = 1e-2
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
-omega_values = np.linspace(-10+mu, mu, 1000)
-eta = 0.1
+omega_values = np.linspace(-6*mu, 6*mu, 10000)
+eta = 0.01
 
 n_B_y = np.zeros(len(B_values))
 n = np.zeros(len(B_values))
@@ -124,7 +124,6 @@ for i, B in enumerate(B_values):
     B_x = B * np.cos(theta)
     B_y = B * np.sin(theta)
     n_B_y[i] = get_normal_density(omega_values, eta, L_x, L_y, w_0, mu, B_x, B_y, Lambda)
-    print(n_B_y)
 
 fig, ax = plt.subplots()
 ax.plot(B_values, n_B_y, "-o")
