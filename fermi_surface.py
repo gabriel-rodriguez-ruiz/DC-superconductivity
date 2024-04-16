@@ -52,14 +52,13 @@ def get_normal_density(omega_values, mu, eta, L_x, L_y, w_0, B_x, B_y, Lambda):
     DOS = get_DOS(omega_values, eta, L_x, L_y, w_0, B_x, B_y, Lambda)
     return np.sum(DOS[omega_values<mu])*np.diff(omega_values)[0]
 
-#%%
-L_x = 1000
-L_y = 1
+#%% Plot energy bands
+L_x = 100
+L_y = 100
 w_0 = 10
-Delta = 0.2
-mu = 0 #2*(20*Delta-2*w_0)
+mu = -38 #2*(20*Delta-2*w_0)
 theta = np.pi/2
-B = 0#3*Delta
+B = 0.6
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
@@ -82,9 +81,9 @@ plt.tight_layout()
 L_x = 200
 L_y = 200
 w_0 = 10
-mu = 0 + 4*w_0
+mu = -32
 theta = np.pi/2
-B = 0
+B = 3*Delta
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.56
