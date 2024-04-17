@@ -56,9 +56,9 @@ def get_normal_density(omega_values, mu, eta, L_x, L_y, w_0, B_x, B_y, Lambda):
 L_x = 100
 L_y = 100
 w_0 = 10
-mu = -38 #2*(20*Delta-2*w_0)
+mu = -40 #2*(20*Delta-2*w_0)
 theta = np.pi/2
-B = 0.6
+B = 3*0.2
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
@@ -81,9 +81,9 @@ plt.tight_layout()
 L_x = 200
 L_y = 200
 w_0 = 10
-mu = -32
+mu = -40
 theta = np.pi/2
-B = 0
+B = 3*0.2
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.56

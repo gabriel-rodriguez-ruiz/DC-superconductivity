@@ -48,9 +48,9 @@ def get_superconducting_density(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda, h):
     E = get_Energy(k_x_values, k_y_values, phi_x_values, phi_y_values, w_0, mu, Delta, B_x, B_y, Lambda)
     negative_energy = np.where(E<0, E, 0)
     fundamental_energy = 1/2*np.sum(negative_energy, axis=(0, 1, 4))
-    n_s_xx = 1/(L_x*L_y) * ( fundamental_energy[2,1] - 2*fundamental_energy[1,1] + fundamental_energy[0,1]) / h**2
-    n_s_yy = 1/(L_x*L_y) * ( fundamental_energy[1,2] - 2*fundamental_energy[1,1] + fundamental_energy[1,0]) / h**2
-    n_s_xy = 1/(L_x*L_y) * ( fundamental_energy[2,2] - fundamental_energy[2,0] - fundamental_energy[0,2] + fundamental_energy[0,0]) / h**2
+    n_s_xx = 1/w_0 * 1/(L_x*L_y) * ( fundamental_energy[2,1] - 2*fundamental_energy[1,1] + fundamental_energy[0,1]) / h**2
+    n_s_yy = 1/w_0 * 1/(L_x*L_y) * ( fundamental_energy[1,2] - 2*fundamental_energy[1,1] + fundamental_energy[1,0]) / h**2
+    n_s_xy = 1/w_0 * 1/(L_x*L_y) * ( fundamental_energy[2,2] - fundamental_energy[2,0] - fundamental_energy[0,2] + fundamental_energy[0,0]) / h**2
     return n_s_xx, n_s_yy, n_s_xy
 
 def get_Green_function(omega, k_x_values, k_y_values, w_0, mu, Delta, B_x, B_y, Lambda):
@@ -168,17 +168,24 @@ data = np.load("Large_L_limit")
 
 #%% n_s vs. B_y
 
-L_x = 200
-L_y = 200
+L_x = 300
+L_y = 300
 w_0 = 10
 Delta = 0.2
-mu = -32#2*(20*Delta-2*w_0)
+mu = -40#2*(20*Delta-2*w_0)
 theta = np.pi/2
 B_values = np.linspace(0, 3*Delta, 10)
 Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
-h = 1e-3
+h = 1e-2
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
+
+params = {"L_x": L_x, "L_y": L_y, "w_0": w_0,
+          "mu": mu, "Delta": Delta, "theta": theta,
+          "B_values": B_values, "Lambda": Lambda,
+          "h": h , "k_x_values": k_x_values,
+          "k_y_values": k_y_values, "h": h,
+          "Lambda": Lambda}
 
 n_B_y = np.zeros((len(B_values), 3))
 n = np.zeros(len(B_values))
@@ -202,21 +209,28 @@ ax.legend()
 plt.tight_layout()
 
 #%%
-np.savez("n_By", h=h, L_x=L_x, L_y=L_y, n_B_y=n_B_y, Lambda=Lambda,
-         Delta=Delta, B_values=B_values, theta=theta, mu=mu, w_0=w_0)
+from pathlib import Path
+
+data_folder = Path("Data/")
+
+file_to_open = data_folder / "n_By_mu_-40_L=250.npz"
+np.savez(file_to_open , n_B_y=n_B_y, **params)
 
 #%% Load data
 
 data = np.load("n_By.npz")
 n_B_y = data["n_B_y"]
-n = 1  #does not change approx. with magnetic field
+n = 0.136  #does not change approx. with magnetic field
 B_values = data["B_values"]
 Delta = data["Delta"]
 mu = data["mu"]
+Lambda = 0.56
+theta = np.pi/2
+w_0 = 10
 
 fig, ax = plt.subplots()
-ax.plot(B_values/Delta, n_B_y[:,0]/n, "-o",  label=r"$n_{s,\perp}$")
-ax.plot(B_values/Delta, n_B_y[:,1]/n, "-o",  label=r"$n_{s,\parallel}$")
+ax.plot(B_values/Delta, n_B_y[:,0]/(n*w_0), "-o",  label=r"$n_{s,\perp}$")
+ax.plot(B_values/Delta, n_B_y[:,1]/(n*w_0), "-o",  label=r"$n_{s,\parallel}$")
 ax.set_title(r"$\lambda=$" + f"{Lambda:.2}"
              +r"; $\Delta=$" + f"{Delta}"
              +r"; $\theta=$" + f"{theta:.3}"
@@ -224,19 +238,20 @@ ax.set_title(r"$\lambda=$" + f"{Lambda:.2}"
              +r"; $w_0$"+f"={w_0}")
 ax.set_xlabel(r"$\frac{B_y}{\Delta}$")
 ax.set_ylabel(r"$\frac{n(B_y)}{n}$")
+ax.set_ylim(-0.4, 1)
 ax.legend()
 plt.tight_layout()
 
 #%% Plot energy bands
 from matplotlib import cm
 
-L_x = 50
-L_y = 50
+L_x = 200
+L_y = 200
 w_0 = 10
-Delta = 0
-mu = -38
-theta = np.pi/2
-B = 0.6#3*Delta
+Delta = 0.2
+mu = -32
+theta = np.pi/4
+B = 3*Delta
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.56 #5*Delta/k_F
@@ -274,13 +289,22 @@ fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 Z = np.append(E[:,:,0,0,1], E[:,:,0,0,2],axis=0)
 # CS = ax.contour(X, Y, Z)
 # ax.clabel(CS, inline=True, fontsize=10)
-surf = ax.plot_surface(np.append(X, X, axis=0), np.append(Y, Y, axis=0), Z, cmap=cm.coolwarm,
+surf = ax.plot_surface(np.append(Y, Y, axis=0), np.append(X, X, axis=0) , Z, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
 # ax.plot_surface(X, Y, E[:,:,0,0,2], cmap='PiYG',
                        # linewidth=0, antialiased=False)
 ax.set_xlabel(r"$k_x$")
 ax.set_ylabel(r"$k_y$")
 ax.set_zlabel(r'$E$')
+
+fig, ax = plt.subplots()
+C1 = ax.contour(Y, X, E[:,:,0,0,1]>0, 0, colors="orange") #notice the inversion of X and Y
+C2 = ax.contour(Y, X, E[:,:,0,0,2]<0, 0, colors="green")
+ax.clabel(C1, inline=True, fontsize=10)
+ax.clabel(C2, inline=True, fontsize=10)
+ax.set_xlabel(r"$k_x$")
+ax.set_ylabel(r"$k_y$")
+
 #%% Density of states
 L_x = 10
 L_y = 10
