@@ -29,8 +29,6 @@ def get_Hamiltonian(k_x, k_y, phi_x, phi_y, w_0, mu, Delta, B_x, B_y, Lambda):
     return H
 
 def get_Energy(k_x_values, k_y_values, phi_x_values, phi_y_values, w_0, mu, Delta, B_x, B_y, Lambda):
-    """
-    """
     energies = np.zeros((len(k_x_values), len(k_y_values),
                         len(phi_x_values), len(phi_y_values), 4))
     for i, k_x in enumerate(k_x_values):
@@ -45,16 +43,11 @@ def get_Energy(k_x_values, k_y_values, phi_x_values, phi_y_values, w_0, mu, Delt
 def get_superconducting_density(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda, h):
     k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
     k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
-    # phi_x_values = [0, h]
-    # phi_y_values = [0, h]
     phi_x_values = [-h, 0, h]
     phi_y_values = [-h, 0, h]
     E = get_Energy(k_x_values, k_y_values, phi_x_values, phi_y_values, w_0, mu, Delta, B_x, B_y, Lambda)
     negative_energy = np.where(E<0, E, 0)
     fundamental_energy = 1/2*np.sum(negative_energy, axis=(0, 1, 4))
-    # n_s_xx = 1/(L_x*L_y) * 2*( fundamental_energy[1,0] - fundamental_energy[0,0]) / (h**2)
-    # n_s_yy = 1/(L_x*L_y) * 2*( fundamental_energy[0,1] - fundamental_energy[0,0]) / (h**2)
-    # n_s_xy = 1/(L_x*L_y) * ( fundamental_energy[1,1] - fundamental_energy[1,0] - fundamental_energy[0,1] + fundamental_energy[0,0]) / (h**2)
     n_s_xx = 1/(L_x*L_y) * ( fundamental_energy[2,1] - 2*fundamental_energy[1,1] + fundamental_energy[0,1]) / h**2
     n_s_yy = 1/(L_x*L_y) * ( fundamental_energy[1,2] - 2*fundamental_energy[1,1] + fundamental_energy[1,0]) / h**2
     n_s_xy = 1/(L_x*L_y) * ( fundamental_energy[2,2] - fundamental_energy[2,0] - fundamental_energy[0,2] + fundamental_energy[0,0]) / h**2

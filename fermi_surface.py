@@ -83,11 +83,11 @@ L_y = 200
 w_0 = 10
 mu = -32
 theta = np.pi/2
-B = 3*Delta
+B = 0
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.56
-omega_values = np.linspace(6*mu, -6*mu, 10000)
+omega_values = np.linspace(-6*w_0, 6*w_0, 10000)
 eta = 0.1
 
 
