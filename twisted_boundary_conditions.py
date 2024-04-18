@@ -168,8 +168,8 @@ data = np.load("Large_L_limit")
 
 #%% n_s vs. B_y
 
-L_x = 300
-L_y = 300
+L_x = 400
+L_y = 400
 w_0 = 10
 Delta = 0.2
 mu = -40#2*(20*Delta-2*w_0)
@@ -213,7 +213,7 @@ from pathlib import Path
 
 data_folder = Path("Data/")
 
-file_to_open = data_folder / "n_By_mu_-40_L=250.npz"
+file_to_open = data_folder / "n_By_mu_-40_L=300.npz"
 np.savez(file_to_open , n_B_y=n_B_y, **params)
 
 #%% Load data

@@ -5,7 +5,7 @@ Created on Sun Oct 22 08:46:18 2023
 @author: gabri
 """
 import numpy as np
-from pauli_matrices import tau_x, sigma_x, tau_z, sigma_0, sigma_y
+from pauli_matrices import tau_0, tau_x, sigma_x, tau_z, sigma_0, sigma_y, sigma_z
 from hamiltonian import Hamiltonian, PeriodicHamiltonianInY,\
                         SparseHamiltonian, SparsePeriodicHamiltonianInY
 
@@ -236,4 +236,49 @@ class A1usSuperconductorKY(A1usSuperconductivity, Hamiltonian):
     def _get_hopping_x(self):
         return 1/2*( -self.t*np.kron(tau_z, sigma_0) -
                     1j/2*self.Delta_p*np.kron(tau_x, sigma_x) )
+
+class SpinOrbitSuperconductorKY(LocalSWaveSuperconductivity, Hamiltonian):
+    r"""Trivial superconductor for a given k in the y direction.
     
+    .. math::
+
+        H_{A1us} = \frac{1}{2}\sum_k H_{A1us,k}
+        
+        H_{S,k} = \sum_n^L \vec{c}^\dagger_n\left[ 
+            \xi_k\tau_z\sigma_0 + \Delta_0 \tau_x\sigma_0
+            -2\lambda sin(k)\tau_z\sigma_x
+            -B_x\tau_0\sigma_x - B_y\tau_0\sigma_y 
+            -B_z\tau_0\sigma_z
+            \right] +
+            \sum_n^{L-1}\left(\vec{c}^\dagger_n(-t\tau_z\sigma_0 
+            -i\lambda\tau_z\sigma_y)\vec{c}_{n+1}
+            + H.c. \right)
+        
+        \vec{c} = (c_{k,\uparrow}, c_{k,\downarrow},c^\dagger_{-k,\downarrow},
+                   -c^\dagger_{-k,\uparrow})^T
+    
+        \xi_k = -2tcos(k) - \mu
+    """
+    def __init__(self,  k:float, L_x:int, t:float, mu:float, Delta_s:float,
+                 Lambda:float, B_x:float, B_y:float, B_z:float):
+        self.k = k
+        self.L_y = 1
+        self.Lambda = Lambda
+        self.B_x = B_x
+        self.B_y = B_y
+        self.B_z = B_z
+        LocalSWaveSuperconductivity.__init__(self, t, mu, Delta_s)
+        Hamiltonian.__init__(self, L_x, 1, self._get_onsite(),
+                             self._get_hopping_x(), np.zeros((4, 4)))
+    def _get_onsite(self):
+        chi_k = -2*self.t*np.cos(self.k)-self.mu
+        return 1/2*( chi_k*np.kron(tau_z, sigma_0) +
+                    self.Delta_s*np.kron(tau_x, sigma_0)
+                    -2*self.Lambda*np.sin(self.k)
+                    *np.kron(tau_z, sigma_x)
+                    -self.B_x*np.kron(tau_0, sigma_x)
+                    -self.B_y*np.kron(tau_0, sigma_y)
+                    -self.B_z*np.kron(tau_0, sigma_z))
+    def _get_hopping_x(self):
+        return 1/2*(-self.t*np.kron(tau_z, sigma_0)
+                    -1j*self.Lambda*np.kron(tau_z, sigma_y))
