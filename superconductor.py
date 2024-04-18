@@ -68,6 +68,7 @@ class TrivialSuperconductorPeriodicInY(LocalSWaveSuperconductivity,
 
 class TrivialSuperconductorKY(LocalSWaveSuperconductivity, Hamiltonian):
     r"""Trivial superconductor for a given k in the y direction.
+    
     .. math::
 
         H_{A1us} = \frac{1}{2}\sum_k H_{A1us,k}
@@ -203,7 +204,7 @@ class A1usSparseSuperconductorPeriodicInY(A1usSuperconductivity,
                                               self._get_hopping_y())    
 
 class A1usSuperconductorKY(A1usSuperconductivity, Hamiltonian):
-    r"""Trivial superconductor for a given k in the y direction.
+    r"""Topological superconductor for a given k in the y direction.
     
     .. math::
 
@@ -235,3 +236,4 @@ class A1usSuperconductorKY(A1usSuperconductivity, Hamiltonian):
     def _get_hopping_x(self):
         return 1/2*( -self.t*np.kron(tau_z, sigma_0) -
                     1j/2*self.Delta_p*np.kron(tau_x, sigma_x) )
+    
