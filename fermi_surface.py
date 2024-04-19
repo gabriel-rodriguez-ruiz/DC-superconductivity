@@ -78,8 +78,8 @@ ax.set_title(f"w_0={w_0}; mu={mu}; Lambda={Lambda:.2}; k_y=0; theta={theta:.2}; 
 plt.tight_layout()
 
 #%% Density of states
-L_x = 300
-L_y = 300
+L_x = 400
+L_y = 400
 w_0 = 10
 mu = -40
 theta = np.pi/2
@@ -103,8 +103,8 @@ ax.set_ylabel(r"$\rho(\omega)$")
 ax.set_xlabel(r"$\omega$")
 
 #%% Normal density vs. By
-L_x = 300
-L_y = 300
+L_x = 400
+L_y = 400
 w_0 = 10
 Delta = 0.2
 mu = -40

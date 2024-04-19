@@ -172,7 +172,7 @@ L_x = 400
 L_y = 400
 w_0 = 10
 Delta = 0.2
-mu = -40#2*(20*Delta-2*w_0)
+mu = -32#2*(20*Delta-2*w_0)
 theta = np.pi/2
 B_values = np.linspace(0, 3*Delta, 20)
 Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
@@ -213,7 +213,7 @@ from pathlib import Path
 
 data_folder = Path("Data/")
 
-file_to_open = data_folder / "n_By_mu_-40_L=300.npz"
+file_to_open = data_folder / "n_By_mu_-40_L=400.npz"
 np.savez(file_to_open , n_B_y=n_B_y, **params)
 
 #%% Load data
