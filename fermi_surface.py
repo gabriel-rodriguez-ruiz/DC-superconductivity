@@ -78,8 +78,8 @@ ax.set_title(f"w_0={w_0}; mu={mu}; Lambda={Lambda:.2}; k_y=0; theta={theta:.2}; 
 plt.tight_layout()
 
 #%% Density of states
-L_x = 400
-L_y = 400
+L_x = 200
+L_y = 200
 w_0 = 10
 mu = -40
 theta = np.pi/2
@@ -114,14 +114,19 @@ Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 omega_values = np.linspace(-6*w_0, 6*w_0, 10000)
 eta = 0.1
 
-n_B_y = np.zeros(len(B_values))
+params = {"L_x": L_x, "L_y": L_y, "w_0": w_0,
+          "mu": mu, "Delta": Delta, "theta": theta,
+          "B_values": B_values, "Lambda": Lambda,
+          }
+
+n = np.zeros(len(B_values))
 for i, B in enumerate(B_values):
     B_x = B * np.cos(theta)
     B_y = B * np.sin(theta)
-    n_B_y[i] = get_normal_density(omega_values, eta, L_x, L_y, w_0, mu, B_x, B_y, Lambda)
+    n[i] = get_normal_density(omega_values, mu, eta, L_x, L_y, w_0, B_x, B_y, Lambda)
 
 fig, ax = plt.subplots()
-ax.plot(B_values, n_B_y, "-o")
+ax.plot(B_values, n, "-o")
 ax.set_title(r"$\lambda=$" + f"{Lambda:.2}"
              +r"; $\Delta=$" + f"{Delta}"
              +r"; $\theta=$" + f"{theta:.3}"
@@ -130,3 +135,11 @@ ax.set_title(r"$\lambda=$" + f"{Lambda:.2}"
 ax.set_xlabel(r"$\frac{B_y}{\Delta}$")
 ax.set_ylabel(r"$n(B_y)$")
 plt.tight_layout()
+
+#%%
+from pathlib import Path
+
+data_folder = Path("Data/")
+
+file_to_open = data_folder / "n_By_mu_-40_L=400.npz"
+np.savez(file_to_open , n=n, **params)
