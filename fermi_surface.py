@@ -107,8 +107,8 @@ L_x = 400
 L_y = 400
 w_0 = 10
 Delta = 0.2
-mu = -40
-B_values = np.linspace(0, 3*Delta, 10)
+mu = -32
+B_values = np.linspace(0, 3*Delta, 20)
 theta = np.pi/2
 Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 omega_values = np.linspace(-6*w_0, 6*w_0, 10000)
@@ -124,7 +124,8 @@ for i, B in enumerate(B_values):
     B_x = B * np.cos(theta)
     B_y = B * np.sin(theta)
     n[i] = get_normal_density(omega_values, mu, eta, L_x, L_y, w_0, B_x, B_y, Lambda)
-
+    print(i)
+    
 fig, ax = plt.subplots()
 ax.plot(B_values, n, "-o")
 ax.set_title(r"$\lambda=$" + f"{Lambda:.2}"
@@ -141,5 +142,5 @@ from pathlib import Path
 
 data_folder = Path("Data/")
 
-file_to_open = data_folder / "n_By_mu_-40_L=400.npz"
+file_to_open = data_folder / "n_mu_-32_L=400.npz"
 np.savez(file_to_open , n=n, **params)
