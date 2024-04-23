@@ -124,7 +124,7 @@ L_x = 400
 L_y = 400
 w_0 = 10
 Delta = 0.2
-mu = -32
+mu = -40
 theta_values = np.linspace(0, np.pi, 20)
 B = 0.9*Delta
 Lambda = 0.56
@@ -161,7 +161,7 @@ ax.legend()
 plt.tight_layout()
 
 #%%
-np.savez("n_angle_mu=-32_L=400", n_theta=n_theta, theta_values=theta_values,
+np.savez("n_angle_mu=-40_L=400", n_theta=n_theta, theta_values=theta_values,
          B=B)
 #%% Load data
 
@@ -177,7 +177,7 @@ mu = -32#2*(20*Delta-2*w_0)
 theta = np.pi/2
 B_values = np.linspace(0, 3*Delta, 20)
 Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
-h = 1e-2
+h = 1e-3
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
 
