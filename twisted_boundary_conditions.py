@@ -124,13 +124,14 @@ L_x = 150
 L_y = 150
 w_0 = 10
 Delta = 0.2
-mu = 2*(20*Delta-2*w_0)
+mu = -40
 theta_values = np.linspace(0, np.pi, 20)
 B = 0.5*Delta
 Lambda = 5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 h = 1e-2
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
+n = 0.136
 
 n_theta = np.zeros((len(theta_values), 3))
 for i, theta in enumerate(theta_values):
@@ -140,8 +141,8 @@ for i, theta in enumerate(theta_values):
     print(i)
 
 fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
-ax.plot(theta_values, n_theta[:,0], "or", label=r"$n_{xx}$")
-ax.plot(theta_values, n_theta[:,1], "ob", label=r"$n_{yy}$")
+ax.plot(theta_values, n_theta[:,0]/n, "or", label=r"$n_{xx}$")
+ax.plot(theta_values, n_theta[:,1]/n, "ob", label=r"$n_{yy}$")
 # ax.plot(theta_values, np.sqrt(n_theta[:,0]**2+n_theta[:,1]**2), "og", label=r"$|n_s|^2$")
 # ax.plot(theta_values+np.pi/2, n_theta[:,0], "or", label=r"$n_{s,\perp}$")
 # ax.plot(theta_values+np.pi/2, n_theta[:,1], "ob", label=r"$n_{s,\parallel}$")
@@ -160,7 +161,7 @@ ax.legend()
 plt.tight_layout()
 
 #%%
-np.savez("n_angle", n_theta=n_theta, theta_values=theta_values,
+np.savez("Data/n_angle_mu=-40_L=400", n_theta=n_theta, theta_values=theta_values,
          B=B)
 #%% Load data
 
@@ -213,15 +214,17 @@ from pathlib import Path
 
 data_folder = Path("Data/")
 
-file_to_open = data_folder / "n_By_mu_-40_L=400.npz"
+file_to_open = data_folder / "n_By_mu_-40_L=400_h=10e-3.npz"
 np.savez(file_to_open , n_B_y=n_B_y, **params)
 
 #%% Load data
 
 data = np.load("n_By.npz")
 n_B_y = data["n_B_y"]
-normal_data = np.load("n_mu=-40.npz")
-n = normal_data["n"]  #does not change approx. with magnetic field
+# Data_n = np.load(data_folder / "n_mu_-40_L=400.npz")  #does not change approx. with magnetic field
+Data_n = np.load(data_folder / "n_mu_-32_L=400.npz")  #does not change approx. with magnetic field
+n = Data_n["n"] #n=0.136
+
 B_values = data["B_values"]
 Delta = data["Delta"]
 mu = data["mu"]
