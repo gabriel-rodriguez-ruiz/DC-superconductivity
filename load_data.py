@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 data_folder = Path("Data/")
 
-file_path = data_folder / 'resonance_shift.dat'
+file_path = data_folder / 'resonance_shift_new.dat'
 
 data = pd.read_table(file_path, dtype=float,
                      header=1, sep='\s+',
