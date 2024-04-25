@@ -120,14 +120,14 @@ np.savez("Large_L_limit", L=L, n_L=n_L, Lambda=Lambda,
 
 #%% Angular dependence
 
-L_x = 400
-L_y = 400
+L_x = 150
+L_y = 150
 w_0 = 10
 Delta = 0.2
-mu = -32
+mu = 2*(20*Delta-2*w_0)
 theta_values = np.linspace(0, np.pi, 20)
-B = 0.9*Delta
-Lambda = 0.56
+B = 0.5*Delta
+Lambda = 5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 h = 1e-2
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
@@ -217,16 +217,11 @@ file_to_open = data_folder / "n_By_mu_-40_L=400.npz"
 np.savez(file_to_open , n_B_y=n_B_y, **params)
 
 #%% Load data
-data_folder = Path("Data/")
-# file_to_open = data_folder / "n_By_mu_-40_L=400.npz"
-file_to_open = data_folder / "n_By_mu_-32_L=400.npz"
 
-data = np.load(file_to_open)
+data = np.load("n_By.npz")
 n_B_y = data["n_B_y"]
-# Data_n = np.load(data_folder / "n_mu_-40_L=400.npz")  #does not change approx. with magnetic field
-Data_n = np.load(data_folder / "n_mu_-32_L=400.npz")  #does not change approx. with magnetic field
-n = Data_n["n"]
-
+normal_data = np.load("n_mu=-40.npz")
+n = normal_data["n"]  #does not change approx. with magnetic field
 B_values = data["B_values"]
 Delta = data["Delta"]
 mu = data["mu"]
@@ -244,7 +239,7 @@ ax.set_title(r"$\lambda=$" + f"{Lambda:.2}"
              +r"; $w_0$"+f"={w_0}")
 ax.set_xlabel(r"$\frac{B_y}{\Delta}$")
 ax.set_ylabel(r"$\frac{n(B_y)}{n}$")
-# ax.set_ylim(-0.4, 1)
+ax.set_ylim(-0.4, 1)
 ax.legend()
 plt.tight_layout()
 
