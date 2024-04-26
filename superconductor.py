@@ -10,7 +10,7 @@ from hamiltonian import Hamiltonian, PeriodicHamiltonianInY,\
                         SparseHamiltonian, SparsePeriodicHamiltonianInY
 
 class LocalSWaveSuperconductivity():
-    r"""Trivial superconductor with local s-wave pairing symmetry.
+    r"""Superconductor with local s-wave pairing symmetry.
     
     Parameters
     ----------
