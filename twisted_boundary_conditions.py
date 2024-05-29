@@ -73,12 +73,12 @@ def get_DOS(omega, eta, L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda):
 
 #%% Superconducting density vs. 1/(L_x*L_y)
 
-L_values = np.linspace(10, 200, 10, dtype=int)
+L_values = np.linspace(100, 200, 10, dtype=int)
 w_0 = 10
-Delta = 0.2
-mu = -80
+Delta = 0
+mu = -40
 theta = np.pi/2
-B = 3*Delta
+B = 0
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
 Lambda = 0.56
@@ -93,7 +93,9 @@ params = {"L_values":L_values, "w_0":w_0, "Delta":Delta,
 
 n_L = np.zeros((len(L_values), 3))
 for i, L in enumerate(L_values):
-    n_L[i, 0], n_L[i, 1], n_L[i, 2] = (get_superconducting_density(L, L, w_0, mu, Delta, B_x, B_y, Lambda, h)
+    L_x = L
+    L_y = L
+    n_L[i, 0], n_L[i, 1], n_L[i, 2] = (get_superconducting_density(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda, h)
               )
     print(i)
     
@@ -214,16 +216,19 @@ from pathlib import Path
 
 data_folder = Path("Data/")
 
-file_to_open = data_folder / "n_By_mu_-40_L=400_h=10e-3.npz"
-np.savez(file_to_open , n_B_y=n_B_y, **params)
+file_to_open = data_folder / "n_By_mu_-32_L=400.npz"
+# np.savez(file_to_open , n_B_y=n_B_y, **params)
 
 #%% Load data
+data_folder = Path("Data/")
 
-data = np.load("n_By.npz")
+file_to_open = data_folder / "n_By_mu_-32_L=400.npz"
+data = np.load(file_to_open)
 n_B_y = data["n_B_y"]
 # Data_n = np.load(data_folder / "n_mu_-40_L=400.npz")  #does not change approx. with magnetic field
-Data_n = np.load(data_folder / "n_mu_-32_L=400.npz")  #does not change approx. with magnetic field
-n = Data_n["n"] #n=0.136
+# Data_n = np.load(data_folder / "n_mu_-32_L=400.npz")  #does not change approx. with magnetic field
+# n = Data_n["n"] #n=0.136
+n = n_B_y[0][0]
 
 B_values = data["B_values"]
 Delta = data["Delta"]
@@ -233,16 +238,16 @@ theta = np.pi/2
 w_0 = 10
 
 fig, ax = plt.subplots()
-ax.plot(B_values/Delta, n_B_y[:,0]/n, "-o",  label=r"$n_{s,\perp}$")
-ax.plot(B_values/Delta, n_B_y[:,1]/n, "-o",  label=r"$n_{s,\parallel}$")
+ax.plot(B_values/Delta, np.sqrt(n_B_y[:,0]/n), "-o",  label=r"$n_{s,\perp}$")
+ax.plot(B_values/Delta, np.sqrt(n_B_y[:,1]/n), "-o",  label=r"$n_{s,\parallel}$")
 ax.set_title(r"$\lambda=$" + f"{Lambda:.2}"
              +r"; $\Delta=$" + f"{Delta}"
              +r"; $\theta=$" + f"{theta:.3}"
               + r"; $\mu$"+f"={mu}"
              +r"; $w_0$"+f"={w_0}")
 ax.set_xlabel(r"$\frac{B_y}{\Delta}$")
-ax.set_ylabel(r"$\frac{n(B_y)}{n}$")
-ax.set_ylim(-0.4, 1)
+ax.set_ylabel(r"$\sqrt{\frac{n(B_y)}{n}}$")
+ax.set_ylim(-0.4, 1.1)
 ax.legend()
 plt.tight_layout()
 
@@ -252,13 +257,13 @@ from matplotlib import cm
 L_x = 200
 L_y = 200
 w_0 = 10
-Delta = 0.2
-mu = -32
+Delta = 0.4#0.2
+mu = -39.4#-32
 theta = np.pi/4
-B = 3*Delta
+B = 1#3*Delta
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
-Lambda = 0.56 #5*Delta/k_F
+Lambda = 0.5#0.56 #5*Delta/k_F
 phi_x_values = [0]
 phi_y_values = [0]    #np.linspace(0, np.pi, 1)
 k_x_values = np.pi/L_x*np.arange(-L_x, L_x)

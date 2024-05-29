@@ -29,4 +29,4 @@ data.plot(x=0, ax=ax, marker="o", markersize=2)
 # ax.plot(data_array[:,0], data[:,4], "o", markersize=2, label=r"$\Delta f_{\parallel}(4.4 GHz)$")
 
 ax.set_xlabel("B [T]")
-ax.set_ylabel(r"$\Delta f$")
+ax.set_ylabel(r"$\Delta f [Hz]$")
