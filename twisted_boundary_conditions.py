@@ -73,7 +73,7 @@ def get_DOS(omega, eta, L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda):
 
 #%% Superconducting density vs. 1/(L_x*L_y)
 
-L_values = np.linspace(100, 200, 10, dtype=int)
+L_values = np.linspace(10, 100, 10, dtype=int)
 w_0 = 10
 Delta = 0
 mu = -40
