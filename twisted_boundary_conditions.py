@@ -10,7 +10,7 @@ import numpy as np
 from pauli_matrices import tau_0, sigma_0, tau_z, sigma_x, sigma_y, tau_y, tau_x
 import scipy
 import matplotlib.pyplot as plt
-
+    
 def get_Hamiltonian(k_x, k_y, phi_x, phi_y, w_0, mu, Delta, B_x, B_y, Lambda):
     """ Periodic Hamiltonian in x and y with flux.
     """
@@ -254,8 +254,8 @@ plt.tight_layout()
 #%% Plot energy bands
 from matplotlib import cm
 
-L_x = 200
-L_y = 200
+L_x = 100
+L_y = 100
 w_0 = 10
 Delta = 0.4#0.2
 mu = -39.4#-32
@@ -293,26 +293,26 @@ ax.set_ylabel(r"$\frac{E(k_x)}{\Delta}$")
 ax.set_title(f"w_0={w_0}; Delta={Delta}; mu={mu}; Lambda={Lambda:.2}; k_y=0; Bx={B_x:.2}; By={B_y:.2}")
 plt.tight_layout()
 
-X, Y = np.meshgrid(k_x_values, k_y_values)
-fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-Z = np.append(E[:,:,0,0,1], E[:,:,0,0,2],axis=0)
+#X, Y = np.meshgrid(k_x_values, k_y_values)
+#fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+#Z = np.append(E[:,:,0,0,1], E[:,:,0,0,2],axis=0)
 # CS = ax.contour(X, Y, Z)
 # ax.clabel(CS, inline=True, fontsize=10)
-surf = ax.plot_surface(np.append(Y, Y, axis=0), np.append(X, X, axis=0) , Z, cmap=cm.coolwarm,
-                       linewidth=0, antialiased=False)
+#surf = ax.plot_surface(np.append(Y, Y, axis=0), np.append(X, X, axis=0) , Z, cmap=cm.coolwarm,
+#                       linewidth=0, antialiased=False)
 # ax.plot_surface(X, Y, E[:,:,0,0,2], cmap='PiYG',
                        # linewidth=0, antialiased=False)
-ax.set_xlabel(r"$k_x$")
-ax.set_ylabel(r"$k_y$")
-ax.set_zlabel(r'$E$')
+# ax.set_xlabel(r"$k_x$")
+# ax.set_ylabel(r"$k_y$")
+# ax.set_zlabel(r'$E$')
 
-fig, ax = plt.subplots()
-C1 = ax.contour(Y, X, E[:,:,0,0,1]>0, 0, colors="orange") #notice the inversion of X and Y
-C2 = ax.contour(Y, X, E[:,:,0,0,2]<0, 0, colors="green")
-ax.clabel(C1, inline=True, fontsize=10)
-ax.clabel(C2, inline=True, fontsize=10)
-ax.set_xlabel(r"$k_x$")
-ax.set_ylabel(r"$k_y$")
+# fig, ax = plt.subplots()
+# C1 = ax.contour(Y, X, E[:,:,0,0,1]>0, 0, colors="orange") #notice the inversion of X and Y
+# C2 = ax.contour(Y, X, E[:,:,0,0,2]<0, 0, colors="green")
+# ax.clabel(C1, inline=True, fontsize=10)
+# ax.clabel(C2, inline=True, fontsize=10)
+# ax.set_xlabel(r"$k_x$")
+# ax.set_ylabel(r"$k_y$")
 
 #%% Density of states
 L_x = 10

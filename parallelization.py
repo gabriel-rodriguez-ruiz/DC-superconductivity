@@ -76,17 +76,17 @@ def get_DOS(omega, eta, L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda):
 
 
 if __name__ == "__main__":
-    L_x = 400#400
-    L_y = 400#400
+    L_x = 500#400
+    L_y = 500#400
     w_0 = 10
     Delta = 0.2
-    mu = -39#2*(20*Delta-2*w_0)
+    mu = -40#2*(20*Delta-2*w_0)
     theta = np.pi/2
     Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
     h = 1e-2
     k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
     k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
-    n_cores = 10
+    n_cores = 20
     params = {"L_x": L_x, "L_y": L_y, "w_0": w_0,
               "mu": mu, "Delta": Delta, "theta": theta,
                "Lambda": Lambda,
@@ -100,13 +100,13 @@ if __name__ == "__main__":
         n[0], n[1], n[2] = get_superconducting_density(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda, h)
         return n
     
-    B_values = np.linspace(0, 3*Delta, 10)
+    B_values = np.linspace(0, 3*Delta, 20)
     with multiprocessing.Pool(n_cores) as pool:
         results_pooled = pool.map(integrate, B_values)
     n_B_y = np.array(results_pooled)
     
     data_folder = Path("Data/")
-    name = f"n_By_mu_{mu}_L={L_x}_h={np.round(h,2)}.npz"
+    name = f"n_By_mu_{mu}_L={L_x}_h={np.round(h,2)}_B_y_in_({np.min(B_values)}-max(np.B_values)).npz"
     file_to_open = data_folder / name
     np.savez(file_to_open , n_B_y=n_B_y, B_values=B_values,
              **params)

@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 
 data_folder = Path("Data/")
-file_to_open = data_folder / "n_By_mu_-39_L=200_h=0.01.npz"
+file_to_open = data_folder / "n_By_mu_-39_L=500_h=0.01_B_y_in_(0-0.2).npz"
 Data = np.load(file_to_open)
 
 n_B_y = Data["n_B_y"]
@@ -33,6 +33,6 @@ ax.set_title(r"$\lambda=$" + f"{Lambda:.2}"
              +r"; $w_0$"+f"={w_0}"
              +r"; $L_x=$"+f"{L_x}")
 ax.set_xlabel(r"$\frac{B_y}{\Delta}$")
-ax.set_ylabel(r"$n(B_y)$")
+ax.set_ylabel(r"$n_s(B_y)$")
 ax.legend()
 plt.tight_layout()
