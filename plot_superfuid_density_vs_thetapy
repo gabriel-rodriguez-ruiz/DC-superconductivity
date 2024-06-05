@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed May 29 17:05:28 2024
+Created on Wed Jun  5 17:23:07 2024
 
 @author: gabriel
 """
@@ -11,24 +11,25 @@ from pathlib import Path
 import numpy as np
 
 data_folder = Path("Data/")
-file_to_open = data_folder / "n_By_mu_-40_L=500_h=0.01_B_y_in_(0.0-0.6).npz"
-Data = np.load(file_to_open)
+file_to_open = data_folder / "n_By_mu_-39_L=100_h=0.01_theta_in_(0.0-3.14)_B=0.1.npz"
+Data = np.load(file_to_open, allow_pickle=True)
 
-n_B_y = Data["n_B_y"]
-B_values = Data["B_values"]
+n_theta = Data["n_theta"]
+theta_values = Data["theta_values"]
 Lambda = Data["Lambda"]
-Delta = Data["Delta"]
-theta = Data["theta"]
+Delta = float(Data["Delta"])
 w_0 = Data["w_0"]
 mu = Data["mu"]
 L_x = Data["L_x"]
+B = Data["B"]
 
-fig, ax = plt.subplots()
-ax.plot(B_values/Delta, n_B_y[:,0], "-o",  label=r"$n_{s,\perp}$")
-ax.plot(B_values/Delta, n_B_y[:,1], "-o",  label=r"$n_{s,\parallel}$")
+fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
+
+ax.plot(theta_values, n_theta[:,0], "-o",  label=r"$n_{s,\perp}$")
+ax.plot(theta_values, n_theta[:,1], "-o",  label=r"$n_{s,\parallel}$")
 ax.set_title(r"$\lambda=$" + f"{Lambda:.2}"
              +r"; $\Delta=$" + f"{Delta}"
-             +r"; $\theta=$" + f"{theta:.3}"
+             +r"; $B=$" + f"{B:.3}"
              + r"; $\mu$"+f"={mu}"
              +r"; $w_0$"+f"={w_0}"
              +r"; $L_x=$"+f"{L_x}")

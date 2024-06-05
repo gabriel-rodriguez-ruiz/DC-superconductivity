@@ -103,16 +103,16 @@ ax.set_ylabel(r"$\rho(\omega)$")
 ax.set_xlabel(r"$\omega$")
 
 #%% Normal density vs. By
-L_x = 400
-L_y = 400
+L_x = 200
+L_y = 200
 w_0 = 10
 Delta = 0.2
-mu = -32
-B_values = np.linspace(0, 3*Delta, 20)
+mu = -40
+B_values = np.linspace(0, 3*Delta, 10)
 theta = np.pi/2
 Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 omega_values = np.linspace(-6*w_0, 6*w_0, 10000)
-eta = 0.1
+eta = 0.01
 
 params = {"L_x": L_x, "L_y": L_y, "w_0": w_0,
           "mu": mu, "Delta": Delta, "theta": theta,
