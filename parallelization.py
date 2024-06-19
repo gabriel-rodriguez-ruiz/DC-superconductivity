@@ -76,13 +76,13 @@ def get_DOS(omega, eta, L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda):
 
 
 if __name__ == "__main__":
-    L_x = 500#400
-    L_y = 500#400
+    L_x = 400
+    L_y = 400
     w_0 = 10
-    Delta = 0 # 0.2 ###############Normal state
-    mu = -40#2*(20*Delta-2*w_0)
+    Delta = 0.2 # 0.2 ###############Normal state
+    mu = -39#2*(20*Delta-2*w_0)
     theta = np.pi/2
-    Lambda = 0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
+    Lambda = 0#0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
     h = 1e-2
     k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
     k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     n_B_y = np.array(results_pooled)
     
     data_folder = Path("Data/")
-    name = f"n_By_mu_{mu}_L={L_x}_h={np.round(h,2)}_B_y_in_({np.min(B_values)}-{np.max(B_values)})_Delta={Delta}.npz"
+    name = f"n_By_mu_{mu}_L={L_x}_h={np.round(h,2)}_B_y_in_({np.min(B_values)}-{np.round(np.max(B_values),3)})_Delta={Delta}_lambda={Lambda}.npz"
     file_to_open = data_folder / name
     np.savez(file_to_open , n_B_y=n_B_y, B_values=B_values,
              **params)
