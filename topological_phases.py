@@ -10,17 +10,17 @@ from superconductor import SpinOrbitSuperconductorKY
 import numpy as np
 import matplotlib.pyplot as plt
 
-k_y = np.pi/2
-L_x = 20
+k_y = 0   
+L_x = 50
 t = 10
 mu_values = np.linspace(-60, 60, 100)
 Delta_s = 0.2
 Lambda = 0.56
-theta = 0
-B = 0
+theta = np.pi/2
+B = 0.4
 B_x = B * np.cos(theta)
 B_y = B * np.sin(theta)
-B_z = 1/2*Delta_s
+B_z = 0
 E_mu = np.zeros((len(mu_values), 4*L_x))
 
 for i, mu in enumerate(mu_values):
@@ -33,4 +33,4 @@ for i in range(4*L_x):
     ax.plot(mu_values, E_mu[:, i])
 
 ax.set_xlabel(r"$\mu$")
-ax.set_ylabel(r"$E(k_y=\pi/2)$")
+ax.set_ylabel(r"$E(k_y=$"+f"{np.round(k_y, 2)}")
