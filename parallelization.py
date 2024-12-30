@@ -85,6 +85,7 @@ h = 1e-2
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
 n_cores = 8
+n_points = n_cores
 params = {"L_x": L_x, "L_y": L_y, "w_0": w_0,
           "mu": mu, "Delta": Delta, "theta": theta,
            "Lambda": Lambda,
@@ -99,7 +100,7 @@ def integrate(B):
     return n
 
 if __name__ == "__main__":
-    B_values = np.linspace(0, 3*Delta, 1)
+    B_values = np.linspace(0, 3*Delta, n_points)
     with multiprocessing.Pool(n_cores) as pool:
         results_pooled = pool.map(integrate, B_values)
     n_B_y = np.array(results_pooled)
