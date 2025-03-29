@@ -13,24 +13,75 @@ import matplotlib.pyplot as plt
 
 data_folder = Path("Data/")
 
-file_path = data_folder / 'resonance_shift_new.dat'
+file_path = data_folder / 'n_s_4_9GHz.dat'
 
 data = pd.read_table(file_path, dtype=float,
-                     header=1, sep='\s+',
-                      names=["B", r"$\Delta f_{\perp}(3.7 GHz)$",
-                             r"$\Delta f_{\parallel}(3.7 GHz)$", r"$\Delta f_{\perp}(4.4 GHz)$",
-                             r"$\Delta f_{\parallel}(4.4 GHz)$"])
+                     header=0, sep='\t\t',
+                     names=["field 0°", "n_s 0°", "n_s_error 0°", "field 90°",
+                            "n_s 90°", "n_s_error 90°"],
+                     engine='python')
 
 fig, ax = plt.subplots()
-for name in data.columns:
-    if name !="B":
-        ax.plot(data["B"]**2, data[name], label=name)
-        ax.legend()
+plt.errorbar(data["field 0°"], data["n_s 0°"], yerr=data["n_s_error 0°"], label=r"$n_s(0°)$", color="red", fmt="o")
+plt.errorbar(data["field 90°"], data["n_s 90°"], yerr=data["n_s_error 90°"], label=r"$n_s(90°)$", color="black", fmt="o")
 
+ax.set_title("4.9 GHz Resonator, 45°")
+ax.set_xlabel(r"$B$ [$T$]")
+ax.set_ylabel(r"$n_s$")
+ax.legend()
+plt.show()
+
+#%%
+file_path = data_folder / 'n_s_5_7GHz.dat'
+
+data = pd.read_table(file_path, dtype=float,
+                     header=0, sep='\t\t',
+                     names=["field 0°", "n_s 0°", "n_s_error 0°", "field 90°",
+                            "n_s 90°", "n_s_error 90°"],
+                     engine='python')
+
+fig, ax = plt.subplots()
+plt.errorbar(data["field 0°"], data["n_s 0°"], yerr=data["n_s_error 0°"], label=r"$n_s(0°)$", color="red", fmt="o")
+plt.errorbar(data["field 90°"], data["n_s 90°"], yerr=data["n_s_error 90°"], label=r"$n_s(90°)$", color="black", fmt="o")
+
+ax.set_title("5.7 GHz Resonator, 0°")
+ax.set_xlabel(r"$B$ [$T$]")
+ax.set_ylabel(r"$n_s$")
+ax.legend()
+
+
+plt.show()
+
+#%%
+fig, ax = plt.subplots()
+
+ax.scatter(data["field 0°"][:]**2, data["n_s 0°"][:],
+           label=r"$n_s(0°)$", color="red")
+a, b = np.polyfit(data["field 0°"][:8]**2,
+                              data["n_s 0°"][:8], deg=1)
+f = lambda x: a * x + b
+ax.plot(data["field 0°"][:8]**2, f(data["field 0°"][:8]**2), "b--")
+
+ax.scatter(data["field 90°"][:]**2, data["n_s 90°"][:],
+           label=r"$n_s(90°)$", color="black")
+m, n = np.polyfit(data["field 90°"][:8]**2,
+                           data["n_s 90°"][:8], deg=1)
+h = lambda x: m * x + n
+ax.plot(data["field 90°"][:8]**2, h(data["field 90°"][:8]**2), "--")
+
+ax.set_title("5.7 GHz Resonator, 0°")
+ax.set_xlabel(r"$B^2$ [$T^2$]")
+ax.set_ylabel(r"$n_s$")
+ax.legend()
+
+
+plt.show()
+
+#%%
 # fig, ax = plt.subplots()
 # data.plot(x=0, ax=ax, marker="o", markersize=2)
 
-ax.set_xlabel(r"$B^2$ [$T^2$]")
+ax.set_xlabel(r"$B$ [$T$]")
 ax.set_ylabel(r"$\Delta f [Hz]$")
 ax.scatter(data["B"][50]**2, data[r"$\Delta f_{\perp}(3.7 GHz)$"][50])
 a, b = np.polyfit(data["B"][:50]**2,
