@@ -107,7 +107,7 @@ h = Data["h"]
 
 def interpolation_for_theory(x):
     return [
-            np.interp(x, B_values/Delta, n_B_y[:, 0]),
+            np.interp(x/1.5, B_values/Delta, n_B_y[:, 0]),        #I have change x to x/2
             np.interp(x, B_values/Delta, n_B_y[:, 1])
             ]
 
@@ -145,35 +145,37 @@ data = pd.read_table(file_path, dtype=float,
 # def model_parallel(x, a, b, c, d):
 #     return a*(interpolation_for_theory(b*x)[1]) + c + d * x**2
 
-def model_parallel(x, a, b, c):
-    return a*(interpolation_for_theory(x)[1]) + b + c* x**2
+def model_parallel(x, a, c):
+    # return a*(interpolation_for_theory(x)[1]) + b + c* x**2
+    return a*(interpolation_for_theory(x)[1] - interpolation_for_theory(0)[1]) + data["n_s 0°"][0] + c* x**2
 
-def model_perpendicular(x, a, b, c):
-    return a*(interpolation_for_theory(x)[0]) + b + c* x**2
+def model_perpendicular(x, a, c):
+    # return a*(interpolation_for_theory(x)[0]) + b + c* x**2
+    return a*(interpolation_for_theory(x)[0] - interpolation_for_theory(0)[0])  + data["n_s 90°"].dropna()[0] + c* x**2
 
 # initial_parameters = [ 1.55679010e+06, -9.66768578e+03,  2.13135475e+07, -1.09383906e+06]
-initial_parameters_parallel = [ 2.10435188e+06,  2.13288010e+07, -1.26647832e+03]
-popt_parallel, pcov_parallel = curve_fit(model_parallel, data["field 0°"]/data["field 0°"][7], data["n_s 0°"],
+initial_parameters_parallel = [ 2.10435188e+06, -1.26647832e+03]
+popt_parallel, pcov_parallel = curve_fit(model_parallel, data["field 0°"]/data["field 0°"][8], data["n_s 0°"],
                                           p0=initial_parameters_parallel)
 
 
-initial_parameters_perpendicular = [ 1.36837991e+07,  2.10537826e+07, -1.03067549e+03]
+initial_parameters_perpendicular = [ 1.95898403e+07, -7.99583256e+02]
 popt_perpendicular, pcov_perpendicular = curve_fit(
-                                                   model_perpendicular, data["field 90°"].dropna()/data["field 90°"][7], data["n_s 90°"].dropna(),
+                                                   model_perpendicular, data["field 90°"].dropna()/data["field 90°"][8], data["n_s 90°"].dropna(),
                                                    p0=initial_parameters_perpendicular
                                                    )
 
 fig, ax = plt.subplots()
-ax.errorbar(data["field 0°"]/data["field 0°"][7], data["n_s 0°"], yerr=data["n_s_error 0°"], label=r"$n_s(0°)$", color="red", fmt="o")
-ax.errorbar(data["field 90°"].dropna()/data["field 90°"][7], data["n_s 90°"].dropna(), yerr=data["n_s_error 90°"].dropna(), label=r"$n_s(90°)$", color="black", fmt="o")
+ax.errorbar(data["field 0°"]/data["field 0°"][8], data["n_s 0°"], yerr=data["n_s_error 0°"], label=r"$n_s(0°)$", color="red", fmt="o", zorder=1)
+ax.errorbar(data["field 90°"].dropna()/data["field 90°"][8], data["n_s 90°"].dropna(), yerr=data["n_s_error 90°"].dropna(), label=r"$n_s(90°)$", color="black", fmt="o", zorder=2)
 
 
-x_model_parallel  = data["field 0°"]/data["field 0°"][7]
+x_model_parallel  = data["field 0°"]/data["field 0°"][8]
 # fig, ax = plt.subplots()
-ax.plot(x_model_parallel, model_parallel(x_model_parallel, *popt_parallel), "-b",  label=r"fit of $n_s(0°)$")
+ax.plot(x_model_parallel, model_parallel(x_model_parallel, *popt_parallel), "-b",  label=r"fit of $n_s(0°)$", zorder=3)
 
-x_model_perpendicular  = data["field 90°"].dropna()/data["field 90°"][7]
-ax.plot(x_model_perpendicular, model_perpendicular(x_model_perpendicular, *popt_perpendicular), "-b",  label=r"fit of $n_s(90°)$")
+x_model_perpendicular  = data["field 90°"].dropna()/data["field 90°"][8]
+ax.plot(x_model_perpendicular, model_perpendicular(x_model_perpendicular, *popt_perpendicular), "-g",  label=r"fit of $n_s(90°)$")
 
 
 
