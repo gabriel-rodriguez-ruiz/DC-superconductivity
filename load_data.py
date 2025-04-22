@@ -74,10 +74,10 @@ ax.plot(data["field 0°"][:8]**2, f(data["field 0°"][:8]**2), "b--")
 
 ax.scatter(data["field 90°"][:]**2, data["n_s 90°"][:],
            label=r"$n_s(90°)$", color="black")
-m, n = np.polyfit(data["field 90°"][:3]**2,
-                           data["n_s 90°"][:3], deg=1)
+m, n = np.polyfit(data["field 90°"][:15]**2,
+                           data["n_s 90°"][:15], deg=1)
 h = lambda x: m * x + n
-ax.plot(data["field 90°"][:3]**2, h(data["field 90°"][:3]**2), "--")
+ax.plot(data["field 90°"][:15]**2, h(data["field 90°"][:15]**2), "--")
 
 ax.set_title("5.7 GHz Resonator, 0°")
 ax.set_xlabel(r"$B^2$ [$T^2$]")
@@ -92,7 +92,7 @@ plt.show()
 data_folder = Path("../Density-of-states/Data/")
 # data_folder = Path("../anisotropic-superfluid/Data/")
 
-file_to_open = data_folder / "n_By_mu_-349.0_L=1500_h=0.001_B_y_in_(0.0-1.2)_Delta=0.2_lambda_R=2.435064935064935_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=1.57_points=24.npz"
+file_to_open = data_folder / "n_By_mu_-349.0_L=2500_h=0.001_B_y_in_(0.0-1.2)_Delta=0.2_lambda_R=1.4049144729009981_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=1.57_points=24.npz"
 # file_to_open = data_folder / "n_By_mu_-30_L=1000_h=0.01_B_y_in_(0.0-1.2)_Delta=0.2_lambda_R=0.56_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=1.57_points=24.npz"
 
 Data = np.load(file_to_open)
@@ -108,15 +108,15 @@ w_0 = Data["w_0"]
 mu = Data["mu"]
 L_x = Data["L_x"]
 h = Data["h"]
-# points = Data["points"]
-# g_xx = Data["g_xx"]
-# g_yy = Data["g_yy"]
-# g_xy = Data["g_xy"]
-# g_yx = Data["g_yx"]
+points = Data["points"]
+g_xx = Data["g_xx"]
+g_yy = Data["g_yy"]
+g_xy = Data["g_xy"]
+g_yx = Data["g_yx"]
 
 def interpolation_for_theory(x):
     return [
-            np.interp(x/1.5, B_values/Delta, n_B_y[:, 0]),        #I have change x to x/2
+            np.interp(x/1.7, B_values/Delta, n_B_y[:, 0]),        #I have change x to x/2
             np.interp(x, B_values/Delta, n_B_y[:, 1])
             ]
 
@@ -138,13 +138,13 @@ ax.set_title(r"$\lambda_R=$" + f"{np.round(Lambda_R,2)}"
 ax.set_xlabel(r"$B$")
 ax.set_ylabel(r"$n_s$")
 ax.legend()
-saving_folder = Path("/home/gabriel/Dropbox/Figures/Fitting to superfluid density")
-file_name = f'interpolation_to_theory_lambda_R={np.round(Lambda_R,2)}_Delta={Delta}_' + \
-            f'mu={mu}_L={L_x}_h={h}_B_y_in_({np.min(B_values)}-{np.round(np.max(B_values),3)})_theta={np.round(theta,2)}.png'
+# saving_folder = Path("/home/gabriel/Dropbox/Figures/Fitting to superfluid density")
+# file_name = f'interpolation_to_theory_lambda_R={np.round(Lambda_R,2)}_Delta={Delta}_' + \
+#             f'mu={mu}_L={L_x}_h={h}_B_y_in_({np.min(B_values)}-{np.round(np.max(B_values),3)})_theta={np.round(theta,2)}.png'
 
-file_path = saving_folder / file_name
-plt.savefig(file_path, dpi=300)
-
+# file_path = saving_folder / file_name
+# plt.savefig(file_path, dpi=300)
+plt.show()
 
 #%% Fitting to experiment
 from scipy.optimize import curve_fit
@@ -204,10 +204,10 @@ ax.set_title(r"$\lambda_R=$" + f"{np.round(Lambda_R,2)}"
              +r"; $L_x=$"+f"{L_x}"
              +f"; h={h}")
 
-ax.set_xlabel(r"$B/\Delta_0$")
+ax.set_xlabel(r"$g\mu_B B/\Delta_0$")
 ax.set_ylabel(r"$n_s$")
 ax.legend()
-
+plt.show()
 #%% Save figure
 saving_folder = Path("/home/gabriel/Dropbox/Figures/Fitting to superfluid density")
 file_name = f'fit_lambda_R={np.round(Lambda_R,2)}_Delta={Delta}_' \
@@ -215,3 +215,33 @@ file_name = f'fit_lambda_R={np.round(Lambda_R,2)}_Delta={Delta}_' \
 
 file_path = saving_folder / file_name
 fig.savefig(file_path, dpi=300)
+
+#%%
+
+g = 1
+mu_B = 5.79e-5 *1000 # meV/T
+Delta = 0.2 # meV induced gap
+
+
+fig, ax = plt.subplots()
+ax.errorbar(data["field 0°"], data["n_s 0°"], yerr=data["n_s_error 0°"], label=r"$n_s(0°)$", color="red", fmt="o", zorder=1)
+ax.errorbar(data["field 90°"].dropna(), data["n_s 90°"].dropna(), yerr=data["n_s_error 90°"].dropna(), label=r"$n_s(90°)$", color="black", fmt="s", zorder=2)
+
+B_parallel = x_model_parallel  * data["field 0°"][8]  # T
+B_perpendicular = x_model_perpendicular  * data["field 90°"][8] 
+ax.plot(B_parallel, model_parallel(x_model_parallel, *popt_parallel), "-b",  label=r"fit of $n_s(0°)$", zorder=3)
+ax.plot(B_perpendicular, model_perpendicular(x_model_perpendicular, *popt_perpendicular), "--g",  label=r"fit of $n_s(90°)$")
+
+ax.set_title(r"$\lambda_R=$" + f"{np.round(Lambda_R,2)}meV"
+             +r"; $\Delta=$" + f"{Delta}meV"
+             +r"; $\theta=$" + f"{np.round(theta,2)}"
+             + r"; $\mu$"+f"={mu}meV"+ "\n"
+             +r"$w_0$"+f"={w_0}meV"
+             +r"; $L_x=$"+f"{L_x}"
+             +f"; h={h}"
+             + r"; $g_{xx}/g_{yy}=0.6$")
+
+ax.set_xlabel(r"$B(T)$")
+ax.set_ylabel(r"$n_s$")
+ax.legend()
+plt.show()
